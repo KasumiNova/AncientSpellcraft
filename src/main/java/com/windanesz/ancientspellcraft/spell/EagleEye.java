@@ -27,6 +27,11 @@ public class EagleEye extends SpellBuff {
 	@Override
 	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers) {
 
+		if (!caster.world.isRemote && caster.isPotionActive(ASPotions.eagle_eye)) {
+			caster.removePotionEffect(ASPotions.eagle_eye);
+			return true;
+		}
+
 		if (!world.canSeeSky(caster.getPosition())) {
 			if (!world.isRemote)
 				caster.sendStatusMessage(new TextComponentTranslation("spell.ancientspellcraft\\:eagle_eye.indoor"), true);
