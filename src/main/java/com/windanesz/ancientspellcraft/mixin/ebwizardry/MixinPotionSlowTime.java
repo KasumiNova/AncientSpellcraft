@@ -1,4 +1,4 @@
-package com.windanesz.ancientspellcraft.mixin;
+package com.windanesz.ancientspellcraft.mixin.ebwizardry;
 
 import com.windanesz.ancientspellcraft.registry.ASItems;
 import electroblob.wizardry.Wizardry;
@@ -26,7 +26,7 @@ import java.util.List;
 @Mixin(PotionSlowTime.class)
 public class MixinPotionSlowTime {
 
-	@Inject(method = "performEffectConsistent", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "performEffectConsistent", at = @At("HEAD"), cancellable = true, remap = false)
 	private static void mixinPerformEffectConsistent(EntityLivingBase host, int strength, CallbackInfo ci) {
 
 		boolean stopTime = host instanceof EntityPlayer && ItemArtefact.isArtefactActive((EntityPlayer)host, WizardryItems.charm_stop_time);

@@ -1,4 +1,4 @@
-package com.windanesz.ancientspellcraft.mixin;
+package com.windanesz.ancientspellcraft.mixin.ebwizardry;
 
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.Settings;
@@ -21,9 +21,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 
 @Mixin(ItemWizardArmour.class)
-public class ItemWizardArmourMixin {
+public class MixinItemWizardArmour {
 
-	@Inject(method = "addInformation", at = @At("RETURN"))
+	@Inject(method = "addInformation", at = @At("RETURN"), remap = false)
 	private void modifyTooltip(ItemStack stack, World world, List<String> tooltip, ITooltipFlag advanced, CallbackInfo ci) {
 		if (Settings.generalSettings.warlock_bonus_override) {
 			if (((ItemWizardArmour) (Object) this).armourClass == ItemWizardArmour.ArmourClass.WARLOCK) {
@@ -33,14 +33,14 @@ public class ItemWizardArmourMixin {
 		}
 	}
 
-	@Inject(method = "onLivingEquipmentChangeEvent", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "onLivingEquipmentChangeEvent", at = @At("HEAD"), cancellable = true, remap = false)
 	private static void onLivingEquipmentChangeEvent(LivingEquipmentChangeEvent event, CallbackInfo info) {
 		if (Settings.generalSettings.warlock_bonus_override) {
 			info.cancel();
 		}
 	}
 
-	@Inject(method = "applySpellModifiers", at = @At("TAIL"))
+	@Inject(method = "applySpellModifiers", at = @At("TAIL"), remap = false)
 	private void onApplySpellModifiers(EntityLivingBase caster, Spell spell, SpellModifiers modifiers, CallbackInfo ci) {
 		if (Settings.generalSettings.warlock_bonus_override) {
 			// Full set bonuses

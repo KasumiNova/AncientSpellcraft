@@ -6,7 +6,6 @@ import com.windanesz.ancientspellcraft.entity.living.EntityEvilClassWizard;
 import com.windanesz.ancientspellcraft.registry.ASItems;
 import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.item.SpellActions;
-import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.SpellConstruct;
 import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.SpellModifiers;

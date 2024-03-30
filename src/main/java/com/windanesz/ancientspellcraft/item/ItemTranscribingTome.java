@@ -1,9 +1,7 @@
 package com.windanesz.ancientspellcraft.item;
 
-import com.windanesz.ancientspellcraft.block.BlockDimensionFocus;
 import com.windanesz.ancientspellcraft.registry.ASItems;
 import com.windanesz.ancientspellcraft.registry.ASSounds;
-import electroblob.wizardry.client.DrawingUtils;
 import electroblob.wizardry.item.ItemScroll;
 import electroblob.wizardry.item.ItemSpellBook;
 import electroblob.wizardry.item.SpellActions;
@@ -21,7 +19,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -29,9 +26,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 

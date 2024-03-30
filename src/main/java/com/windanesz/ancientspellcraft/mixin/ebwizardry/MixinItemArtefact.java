@@ -1,4 +1,4 @@
-package com.windanesz.ancientspellcraft.mixin;
+package com.windanesz.ancientspellcraft.mixin.ebwizardry;
 
 import com.windanesz.ancientspellcraft.integration.baubles.ASBaublesIntegration;
 import com.windanesz.ancientspellcraft.item.AbstractItemArtefactWithSlots;
@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Mixin(ItemArtefact.class)
-public class ItemArtefactMixins {
+public class MixinItemArtefact {
 
-	@Inject(method = "getActiveArtefacts", at = @At("RETURN"))
+	@Inject(method = "getActiveArtefacts", at = @At("RETURN"), remap = false)
 	private static void modifyItemList(EntityPlayer player, ItemArtefact.Type[] types, CallbackInfoReturnable<List<Item>> cir) {
 		// Add item to the list
 		Optional<Item> optional = AbsorbArtefact.getArtefact(WizardData.get(player));
@@ -41,7 +41,7 @@ public class ItemArtefactMixins {
 		}
 	}
 
-	@Inject(method = "isArtefactActive", at = @At("RETURN"), cancellable = true)
+	@Inject(method = "isArtefactActive", at = @At("RETURN"), cancellable = true, remap = false)
 	private static void modifyArtefactActiveStatus(EntityPlayer player, Item artefact, CallbackInfoReturnable<Boolean> cir) {
 		Optional<Item> optional = AbsorbArtefact.getArtefact(WizardData.get(player));
 		if (optional.isPresent() && optional.get() == artefact) {

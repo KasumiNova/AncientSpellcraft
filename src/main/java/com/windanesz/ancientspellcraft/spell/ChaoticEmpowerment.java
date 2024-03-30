@@ -1,26 +1,20 @@
 package com.windanesz.ancientspellcraft.spell;
 
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
-import com.windanesz.ancientspellcraft.entity.living.EntityCreeperMinion;
 import com.windanesz.ancientspellcraft.registry.ASItems;
 import electroblob.wizardry.entity.living.ISummonedCreature;
-import electroblob.wizardry.item.IConjuredItem;
 import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.item.SpellActions;
-import electroblob.wizardry.spell.Heal;
 import electroblob.wizardry.spell.SpellAreaEffect;
-import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
 public class ChaoticEmpowerment extends SpellAreaEffect implements IClassSpell{
 

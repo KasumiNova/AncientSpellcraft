@@ -1,14 +1,11 @@
 package com.windanesz.ancientspellcraft.entity.ai;
 
-import com.windanesz.ancientspellcraft.entity.living.EntityClassWizard;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 
 import javax.annotation.Nullable;

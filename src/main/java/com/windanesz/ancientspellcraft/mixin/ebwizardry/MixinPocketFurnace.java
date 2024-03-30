@@ -1,6 +1,5 @@
-package com.windanesz.ancientspellcraft.mixin;
+package com.windanesz.ancientspellcraft.mixin.ebwizardry;
 
-import com.windanesz.ancientspellcraft.potion.PotionTimeKnot;
 import com.windanesz.ancientspellcraft.registry.ASItems;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.WizardrySounds;
@@ -24,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PocketFurnace.class)
 public class MixinPocketFurnace {
 
-	@Inject(method = "cast", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "cast", at = @At("HEAD"), cancellable = true, remap = false)
 	private void mixinPerformEffectConsistent(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers, CallbackInfoReturnable<Boolean> ci) {
 		if (ItemArtefact.isArtefactActive(caster, ASItems.charm_thousand_anvils)) {
 			// Check if the player has at least 9 Blocks.COAL_BLOCK blocks in their inventory

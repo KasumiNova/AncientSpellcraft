@@ -1,17 +1,13 @@
-package com.windanesz.ancientspellcraft.mixin;
+package com.windanesz.ancientspellcraft.mixin.ebwizardry;
 
 import com.windanesz.ancientspellcraft.registry.ASItems;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.ConjureBlock;
-import electroblob.wizardry.spell.LifeDrain;
 import electroblob.wizardry.tileentity.TileEntityTimer;
 import electroblob.wizardry.util.BlockUtils;
-import electroblob.wizardry.util.EntityUtils;
-import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
@@ -23,16 +19,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static electroblob.wizardry.spell.LifeDrain.HEAL_FACTOR;
-import static electroblob.wizardry.spell.Spell.DAMAGE;
-
 @Mixin(ConjureBlock.class)
 public class MixinConjureBlock {
 
 	@Unique
 	private static final String BLOCK_LIFETIME = "block_lifetime";
 
-	@Inject(method = "onMiss", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "onMiss", at = @At("HEAD"), cancellable = true, remap = false)
 	private void mixinPerformEffectConsistent(World world, EntityLivingBase caster, Vec3d origin, Vec3d direction, int ticksInUse, SpellModifiers modifiers, CallbackInfoReturnable<Boolean> ci) {
 		if (caster instanceof EntityPlayer && ItemArtefact.isArtefactActive((EntityPlayer) caster, ASItems.ring_solid_air)) {
 			// Calculate new position 2 blocks further in the direction the player is looking

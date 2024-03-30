@@ -1,4 +1,4 @@
-package com.windanesz.ancientspellcraft.mixin;
+package com.windanesz.ancientspellcraft.mixin.minecraft;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EntityDamageSource;

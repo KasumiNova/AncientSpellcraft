@@ -7,7 +7,6 @@ import com.windanesz.ancientspellcraft.registry.ASItems;
 import com.windanesz.ancientspellcraft.tileentity.TileConcealedBlock;
 import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.item.SpellActions;
-import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.SpellRay;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.ParticleBuilder;

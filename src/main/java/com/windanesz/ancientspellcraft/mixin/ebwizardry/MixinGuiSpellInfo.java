@@ -1,4 +1,4 @@
-package com.windanesz.ancientspellcraft.mixin;
+package com.windanesz.ancientspellcraft.mixin.ebwizardry;
 
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.registry.ASItems;
@@ -15,15 +15,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(GuiSpellInfo.class)
-public abstract class GuiSpellInfoMixin {
+public abstract class MixinGuiSpellInfo {
 
 	@Shadow
 	public abstract Spell getSpell();
 
-	@Redirect(
-			method = "drawForegroundLayer",
-			at = @At(value = "INVOKE",
-					target = "Lelectroblob/wizardry/constants/Element;getDisplayName()Ljava/lang/String;"))
+	@Redirect(method = "drawForegroundLayer", at = @At(value = "INVOKE", target = "Lelectroblob/wizardry/constants/Element;getDisplayName()Ljava/lang/String;"), remap = false)
 	private String redirectFormatElement(Element instance) {
 		if (getSpell() instanceof IClassSpell) {
 			if (((IClassSpell) getSpell()).getArmourClass() == ItemWizardArmour.ArmourClass.WARLOCK) {

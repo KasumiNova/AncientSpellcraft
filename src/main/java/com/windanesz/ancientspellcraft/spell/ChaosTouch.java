@@ -4,8 +4,6 @@ import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.potion.PotionChaos;
 import com.windanesz.ancientspellcraft.registry.ASItems;
 import com.windanesz.ancientspellcraft.registry.ASPotions;
-import com.windanesz.ancientspellcraft.spell.IClassSpell;
-import com.windanesz.ancientspellcraft.spell.WarlockElementalSpellEffects;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.item.SpellActions;

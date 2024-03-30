@@ -9,7 +9,6 @@ import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.SpellRay;
-import electroblob.wizardry.util.AllyDesignationSystem;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.ParticleBuilder;

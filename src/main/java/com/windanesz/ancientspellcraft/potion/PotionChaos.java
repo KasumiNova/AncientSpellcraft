@@ -2,7 +2,6 @@ package com.windanesz.ancientspellcraft.potion;
 
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Banish;
-import electroblob.wizardry.spell.Blink;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;

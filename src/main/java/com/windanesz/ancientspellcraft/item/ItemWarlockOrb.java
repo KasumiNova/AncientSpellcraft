@@ -60,7 +60,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.windanesz.ancientspellcraft.item.WizardClassWeaponHelper.getDistributedCost;
 

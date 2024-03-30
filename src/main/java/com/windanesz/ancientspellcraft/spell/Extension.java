@@ -5,7 +5,6 @@ import com.windanesz.ancientspellcraft.Settings;
 import com.windanesz.ancientspellcraft.registry.ASItems;
 import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.item.SpellActions;
-import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.SpellRay;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;

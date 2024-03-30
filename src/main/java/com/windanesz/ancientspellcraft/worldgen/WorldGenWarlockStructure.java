@@ -7,8 +7,6 @@ import com.windanesz.ancientspellcraft.integration.antiqueatlas.ASAntiqueAtlasIn
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.block.BlockRunestone;
 import electroblob.wizardry.constants.Element;
-import electroblob.wizardry.entity.living.EntityEvilWizard;
-import electroblob.wizardry.integration.antiqueatlas.WizardryAntiqueAtlasIntegration;
 import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.worldgen.WorldGenSurfaceStructure;

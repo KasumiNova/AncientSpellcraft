@@ -49,9 +49,26 @@ jobs:
             echo "PROJECT_VERSION=$VERSION" >> $GITHUB_ENV
           fi
 
-      - name: Build with Gradle
+      - name: Run tests
+        id: tests
+        env:
+          USE_ALPHAS: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USER: ${{ env.GITHUB_USER }}
+          PROJECT_VERSION: ${{ env.PROJECT_VERSION }}
+        run: |
+          ./gradlew test
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/macos@v2
+        if: always()
+        with:
+          files: |
+            ${{ github.workspace }}/build/test-results/**/*.xml
+
+      - name: Build
         id: build
-        env: 
+        env:
           USE_ALPHAS: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USER: ${{ env.GITHUB_USER }}

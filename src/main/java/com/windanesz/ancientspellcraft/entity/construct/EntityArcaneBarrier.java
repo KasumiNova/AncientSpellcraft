@@ -2,7 +2,6 @@ package com.windanesz.ancientspellcraft.entity.construct;
 
 import com.google.common.base.Optional;
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
-import com.windanesz.ancientspellcraft.entity.living.EntitySpiritBear;
 import com.windanesz.ancientspellcraft.registry.ASBlocks;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.ICustomHitbox;

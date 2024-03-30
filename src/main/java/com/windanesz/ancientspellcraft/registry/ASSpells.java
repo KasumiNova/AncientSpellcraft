@@ -13,7 +13,6 @@ import com.windanesz.ancientspellcraft.entity.projectile.EntityHeart;
 import com.windanesz.ancientspellcraft.spell.*;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
-import com.windanesz.ancientspellcraft.spell.ChaosTouch;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.spell.SpellConstruct;
 import electroblob.wizardry.spell.SpellProjectile;

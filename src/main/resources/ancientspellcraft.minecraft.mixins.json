@@ -1,0 +1,12 @@
+{
+	"package": "com.windanesz.ancientspellcraft.mixin.minecraft",
+	"refmap": "ancientspellcraft.refmap.json",
+	"minVersion": "0.8",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [
+		"MixinEntityDamageSource",
+		"MixinItemPotion",
+		"MixinIsEntityUndead"
+	],
+	"client": []
+}

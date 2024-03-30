@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.Settings;
 import com.windanesz.ancientspellcraft.entity.living.EntitySkeletonMage;
-import com.windanesz.ancientspellcraft.entity.living.EntitySkeletonMageMinion;
 import com.windanesz.ancientspellcraft.integration.antiqueatlas.ASAntiqueAtlasIntegration;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;

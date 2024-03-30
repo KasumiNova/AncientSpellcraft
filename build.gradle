@@ -1,5 +1,5 @@
+import groovy.json.JsonOutput
 import org.apache.tools.ant.filters.ReplaceTokens
-import groovy.json.*
 
 buildscript {
     repositories {
@@ -17,6 +17,9 @@ buildscript {
         maven {
             name 'Sponge'
             url 'https://repo.spongepowered.org/repository/maven-public/'
+        }
+        maven {
+            url 'https://maven.cleanroommc.com'
         }
     }
     dependencies {
@@ -61,14 +64,13 @@ minecraft {
     mappings channel: project.mappings_channel, version: "${project.mappings_version}-${project.mappings_mc_version}"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    accessTransformer = file('src/main/resources/META-INF/ancientspellcraft_at.cfg')
 
     def args = ["-Dmixin.debug.export=true",
                 '-Dmixin.hotSwap=true',
                 '-Dmixin.checks.interfaces=true',
                 '--username', 'WinDanesz', '--user', 'WinDanesz', '--uuid', '7faee354-8c60-4f5c-9862-fc0ce5f7f575',
-                '-Dfml.coreMods.load=' + coremod_plugin_class_name
-    ]
+                '-Dfml.coreMods.load=' + coremod_plugin_class_name]
     // Default run configurations.
     // These can be tweaked, removed, or duplicated as needed.
     runs {
@@ -119,6 +121,7 @@ repositories {
     maven {
         url = uri('https://m2.dv8tion.net/releases')
     }
+    maven { url = 'https://maven.cleanroommc.com' }
     maven {
         url = uri('https://jitpack.io')
     }
@@ -158,6 +161,8 @@ dependencies {
     //// Dependencies ////
     // For local development
     // implementation fg.deobf("random_placeholder:ElectroblobsWizardry:4.3.12")
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
     implementation fg.deobf("curse.maven:ElectroblobsWizardry-${wizardry_projectid}:${wizardry_fileid}")
     implementation fg.deobf("curse.maven:baubles-${baubles_projectid}:${baubles_fileid}")
     implementation fg.deobf("mezz.jei:jei_${mc_version}:${jei_version}")
@@ -165,29 +170,34 @@ dependencies {
     implementation fg.deobf("curse.maven:antique-atlas-${antiqueatlas_projectid}:${antiqueatlas_fileid}")
     implementation fg.deobf("curse.maven:MixinBooter-${mixinbooter_projectid}:${mixinbooter_fileid}")
     implementation fg.deobf("curse.maven:WizardryUtils-${wizardryutils_projectid}:${wizardryutils_fileid}")
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
+    annotationProcessor 'com.google.guava:guava:24.1.1-jre'
+    annotationProcessor 'com.google.code.gson:gson:2.8.6'
 }
 
-mixin {
-    add sourceSets.main, "ancientspellcraft.refmap.json"
+tasks.named('test', Test) {
+    useJUnitPlatform()
 }
 
 jar {
     manifest {
-        attributes([
-                "Maven-Artifact": "${project.maven_group}:${project.archivesBaseName}:${project.version}",
-                "Specification-Title": archivesBaseName,
-                "Specification-Vendor": "WinDanesz",
-                "Specification-Version": "1", // We are version 1 of ourselves
-                "Implementation-Title": project.name,
-                "Implementation-Version": "${version}",
-                "Implementation-Vendor" :"WinDanesz",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "Built-On-Java": "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
-                "Built-On": "${project.mc_version}-${project.forge_version}",
-                "FMLCorePlugin": project.coremod_plugin_class_name,
-                "FMLCorePluginContainsFMLMod": true,
-                "ForceLoadAsMod": project.gradle.startParameter.taskNames[0] == "build",
-        ])
+        attributes(["Maven-Artifact"             : "${project.maven_group}:${project.archivesBaseName}:${project.version}",
+                    "Specification-Title"        : archivesBaseName,
+                    "Specification-Vendor"       : "WinDanesz",
+                    "Specification-Version"      : "1", // We are version 1 of ourselves
+                    "Implementation-Title"       : project.name,
+                    "Implementation-Version"     : "${version}",
+                    "Implementation-Vendor"      : "WinDanesz",
+                    "Implementation-Timestamp"   : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                    "Built-On-Java"              : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
+                    'TweakClass'                 : "org.spongepowered.asm.launch.MixinTweaker",
+                    "Built-On"                   : "${project.mc_version}-${project.forge_version}",
+                    "FMLCorePlugin"              : "com.windanesz.ancientspellcraft.core.ASLoadingPlugin",
+                    "FMLCorePluginContainsFMLMod": true,
+                    "FMLAT"                      : "ancientspellcraft_at.cfg",
+                    "ForceLoadAsMod"             : project.gradle.startParameter.taskNames[0] == "build",])
     }
 }
 
@@ -196,18 +206,16 @@ task sourceJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
     manifest {
-        attributes([
-                "Maven-Artifact": "${project.maven_group}:${project.archivesBaseName}:${project.version}",
-                "Specification-Title": archivesBaseName,
-                "Specification-Vendor": "WinDanesz",
-                "Specification-Version": "1",
-                "Implementation-Title": archivesBaseName + '-sources',
-                "Implementation-Version": "${project.mod_version}",
-                "Implementation-Vendor": "WinDanesz",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "Built-On-Java": "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
-                "Built-On": "${project.mc_version}-${project.forge_version}"
-        ])
+        attributes(["Maven-Artifact"          : "${project.maven_group}:${project.archivesBaseName}:${project.version}",
+                    "Specification-Title"     : archivesBaseName,
+                    "Specification-Vendor"    : "${project.author}",
+                    "Specification-Version"   : "1",
+                    "Implementation-Title"    : archivesBaseName + '-sources',
+                    "Implementation-Version"  : "${project.mod_version}",
+                    "Implementation-Vendor"   : "${project.author}",
+                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                    "Built-On-Java"           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
+                    "Built-On"                : "${project.mc_version}-${project.forge_version}"])
     }
 }
 
@@ -225,10 +233,10 @@ task downloadSources {
     doLast {
         mkdir "libs"
         def wizardry = new File("libs/WizardrySrc-${wizardry_version}.zip")
-        new URL("https://github.com/Electroblob77/Wizardry/archive/v${wizardry_version}.zip").withInputStream{ i -> wizardry.withOutputStream{ it << i }}
+        new URL("https://github.com/Electroblob77/Wizardry/archive/v${wizardry_version}.zip").withInputStream { i -> wizardry.withOutputStream { it << i } }
 
         def baubles = new File("libs/BaublesSrc-${baubles_version}.zip")
-        new URL("https://github.com/WinDanesz/Baubles/archive/${baubles_version}.zip").withInputStream{ i -> baubles.withOutputStream{ it << i }}
+        new URL("https://github.com/WinDanesz/Baubles/archive/${baubles_version}.zip").withInputStream { i -> baubles.withOutputStream { it << i } }
     }
 }
 
@@ -256,21 +264,21 @@ if (System.getenv('USE_ALPHAS').equals('true')) {
         }
         def rawLog = grgit.log(includes: ['HEAD'], excludes: [getLastTag()]);
         def log = "";
-        for (org.ajoberstar.grgit.Commit commit: rawLog) {
+        for (org.ajoberstar.grgit.Commit commit : rawLog) {
             log = log + "[`" + commit.abbreviatedId + "`](https://github.com/${project.github}/commit/" + commit.id + ") " + commit.shortMessage + " - " + commit.author.name + "\\n";
         }
         doLast {
             exec {
                 commandLine "echo", "##[set-output name=jar_name;]${project.jar_name}";
             }
-            if(project.hasProperty('curse_project_id')) {
+            if (project.hasProperty('curse_project_id')) {
                 exec {
                     commandLine "echo", "##[set-output name=curse_project_id;]${project.curse_project_id}";
                 }
                 exec {
                     commandLine "echo", "##[set-output name=curse_versions;]${project.curse_versions}";
                 }
-                if(project.hasProperty('curse_relations')) {
+                if (project.hasProperty('curse_relations')) {
                     exec {
                         commandLine "echo", "##[set-output name=curse_relations;]${project.curse_relations}";
                     }
@@ -296,14 +304,14 @@ if (System.getenv('USE_ALPHAS').equals('true')) {
             exec {
                 commandLine "echo", "##[set-output name=jar_name;]${project.jar_name}";
             }
-            if(project.hasProperty('curse_project_id')) {
+            if (project.hasProperty('curse_project_id')) {
                 exec {
                     commandLine "echo", "##[set-output name=curse_project_id;]${project.curse_project_id}";
                 }
                 exec {
                     commandLine "echo", "##[set-output name=curse_versions;]${project.curse_versions}";
                 }
-                if(project.hasProperty('curse_relations')) {
+                if (project.hasProperty('curse_relations')) {
                     exec {
                         commandLine "echo", "##[set-output name=curse_relations;]${project.curse_relations}";
                     }
@@ -351,7 +359,7 @@ processResources {
                 'description': project.description,
                 'url': project.url,
                 'update_url': project.update_url,
-                "credits" : credits
+                "credits": credits
     }
 
     duplicatesStrategy = 'include'
@@ -382,6 +390,11 @@ fancyGradle {
         coremods
         asm
     }
+}
+
+mixin {
+    add sourceSets.main, "ancientspellcraft.refmap.json"
+    disableAnnotationProcessorCheck()
 }
 
 publishing {

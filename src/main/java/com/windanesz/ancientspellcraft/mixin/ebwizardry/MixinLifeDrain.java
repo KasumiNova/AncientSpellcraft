@@ -1,4 +1,4 @@
-package com.windanesz.ancientspellcraft.mixin;
+package com.windanesz.ancientspellcraft.mixin.ebwizardry;
 
 import com.windanesz.ancientspellcraft.registry.ASItems;
 import electroblob.wizardry.item.ItemArtefact;
@@ -23,7 +23,7 @@ import static electroblob.wizardry.spell.Spell.DAMAGE;
 public class MixinLifeDrain {
 
 
-	@Inject(method = "onEntityHit", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "onEntityHit", at = @At("HEAD"), cancellable = true, remap = false)
 	private void mixinPerformEffectConsistent(World world, Entity target, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers, CallbackInfoReturnable<Boolean> ci) {
 		if(EntityUtils.isLiving(target)){
 

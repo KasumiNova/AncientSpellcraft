@@ -4,7 +4,6 @@ import com.windanesz.ancientspellcraft.data.SpellCategorization;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.constants.Tier;
 import electroblob.wizardry.item.ItemWizardArmour;
-import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellProperties;
 import net.minecraft.entity.EntityLiving;

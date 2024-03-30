@@ -1,7 +1,6 @@
 package com.windanesz.ancientspellcraft.spell;
 
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
-import com.windanesz.ancientspellcraft.entity.construct.EntityAntiMagicField;
 import com.windanesz.ancientspellcraft.entity.construct.EntityChaosField;
 import com.windanesz.ancientspellcraft.registry.ASItems;
 import electroblob.wizardry.item.ItemWizardArmour;

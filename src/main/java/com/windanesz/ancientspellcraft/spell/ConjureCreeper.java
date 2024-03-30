@@ -4,7 +4,6 @@ import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.entity.living.EntityCreeperMinion;
 import com.windanesz.ancientspellcraft.registry.ASItems;
 import electroblob.wizardry.item.ItemWizardArmour;
-import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.SpellMinion;
 import net.minecraft.item.Item;
 

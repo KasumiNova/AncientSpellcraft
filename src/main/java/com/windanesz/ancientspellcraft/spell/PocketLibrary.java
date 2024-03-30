@@ -10,7 +10,6 @@ import electroblob.wizardry.data.Persistence;
 import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.item.SpellActions;
-import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.tileentity.TileEntityBookshelf;
 import electroblob.wizardry.util.NBTExtras;

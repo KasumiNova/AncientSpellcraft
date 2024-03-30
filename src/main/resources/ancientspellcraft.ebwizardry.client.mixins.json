@@ -1,0 +1,8 @@
+{
+	"package": "com.windanesz.ancientspellcraft.mixin.ebwizardry",
+	"refmap": "ancientspellcraft.refmap.json",
+	"minVersion": "0.8",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [],
+	"client": ["MixinGuiSpellInfo"]
+}

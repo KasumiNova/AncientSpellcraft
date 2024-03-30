@@ -2,13 +2,11 @@ package com.windanesz.ancientspellcraft.entity.living;
 
 import com.windanesz.ancientspellcraft.entity.ai.EntityAIAttackSpellImproved;
 import com.windanesz.ancientspellcraft.registry.ASItems;
-import com.windanesz.ancientspellcraft.registry.ASSpells;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.entity.living.ISpellCaster;
 import electroblob.wizardry.entity.living.ISummonedCreature;
 import electroblob.wizardry.item.ItemArtefact;
-import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.ParticleBuilder;
@@ -43,7 +41,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;

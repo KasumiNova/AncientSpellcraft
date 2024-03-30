@@ -1,7 +1,6 @@
 package com.windanesz.ancientspellcraft.client.gui;
 
 import com.windanesz.ancientspellcraft.item.IItemWithSlots;
-import com.windanesz.ancientspellcraft.item.ItemGlyphArtefact;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;

@@ -1,9 +1,7 @@
 package com.windanesz.ancientspellcraft.worldgen;
 
-import com.google.common.collect.ImmutableMap;
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.Settings;
-import com.windanesz.ancientspellcraft.block.BlockSageLectern;
 import com.windanesz.ancientspellcraft.entity.living.EntityStoneGuardian;
 import com.windanesz.ancientspellcraft.integration.antiqueatlas.ASAntiqueAtlasIntegration;
 import com.windanesz.ancientspellcraft.tileentity.TileSageLectern;
@@ -25,7 +23,6 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;

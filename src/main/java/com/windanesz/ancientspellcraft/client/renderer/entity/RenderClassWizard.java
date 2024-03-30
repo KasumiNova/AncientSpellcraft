@@ -7,8 +7,6 @@ import electroblob.wizardry.item.ItemWizardArmour;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
-import net.minecraft.item.EnumAction;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 
 //@SideOnly(Side.CLIENT)

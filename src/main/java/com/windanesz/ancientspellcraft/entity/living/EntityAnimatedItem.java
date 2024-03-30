@@ -40,7 +40,6 @@ import electroblob.wizardry.util.SpellModifiers;
 import electroblob.wizardry.util.WandHelper;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.SharedMonsterAttributes;

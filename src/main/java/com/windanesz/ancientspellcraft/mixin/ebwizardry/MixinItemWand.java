@@ -1,4 +1,4 @@
-package com.windanesz.ancientspellcraft.mixin;
+package com.windanesz.ancientspellcraft.mixin.ebwizardry;
 
 import com.windanesz.ancientspellcraft.spell.WarlockElementalSpellEffects;
 import electroblob.wizardry.block.BlockReceptacle;
@@ -32,12 +32,12 @@ import java.util.List;
 import java.util.Random;
 
 @Mixin(ItemWand.class)
-public class ItemWandMixin {
+public class MixinItemWand {
 
 
 	@Shadow public Element element;
 
-	@Inject(method = "hitEntity", at = @At("RETURN"))
+	@Inject(method = "hitEntity", at = @At("RETURN"), remap = false)
 	private void modifyItemList(ItemStack stack, EntityLivingBase originalTarget, EntityLivingBase wielder, CallbackInfoReturnable<Boolean> cir) {
 		int level = WandHelper.getUpgradeLevel(stack, WizardryItems.melee_upgrade);
 		if (level > 0) {
@@ -103,7 +103,7 @@ public class ItemWandMixin {
 		}
 	}
 
-	@Inject(method = "onAttackEntityEvent", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "onAttackEntityEvent", at = @At("HEAD"), cancellable = true, remap = false)
 	private static void onAttackEntityEventMixin(AttackEntityEvent event, CallbackInfo ci) {
 
 		EntityPlayer wielder = event.getEntityPlayer();

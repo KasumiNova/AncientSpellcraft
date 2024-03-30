@@ -2,7 +2,6 @@ package com.windanesz.ancientspellcraft.spell;
 
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.registry.ASItems;
-import com.windanesz.ancientspellcraft.registry.ASSounds;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.item.SpellActions;
