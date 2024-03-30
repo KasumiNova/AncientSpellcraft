@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.7.0] - 2024-03-30
+### :sparkles: New Features
+- [`2a52766`](https://github.com/WinDanesz/AncientSpellcraft/commit/2a527664bfc69f9a7bee0d624d488fd5d84dc68f) - Buffed coal amount from the Bottomless Coal Bucket artefact (2-5 -> 5-15) *(commit by [@WinDanesz](https://github.com/WinDanesz))*
+- [`450cdc8`](https://github.com/WinDanesz/AncientSpellcraft/commit/450cdc8c2fa3537abe5ffa4bf0a3300ace9416f7) - Warlock content, remove ItemNewArtefact, added MixinBooter dependency. code refactoring *(commit by [@WinDanesz](https://github.com/WinDanesz))*
+- [`69b29b4`](https://github.com/WinDanesz/AncientSpellcraft/commit/69b29b41345a34c8384688ec8fbcfe6dbc472202) - Animated 'Conjured Bows' are now shooting spectral arrows *(commit by [@WinDanesz](https://github.com/WinDanesz))*
+- [`10e0184`](https://github.com/WinDanesz/AncientSpellcraft/commit/10e0184922d744d2da297c37292069d3c222bab6) - Increased spell blade (battlemage sword) elemental potency per tier (13%,25%,38%,50%). *(commit by [@WinDanesz](https://github.com/WinDanesz))*
+- [`a2fa385`](https://github.com/WinDanesz/AncientSpellcraft/commit/a2fa3853775c9c5496071ad41e09c9f86fab9055) - Added Wizardry Utils as a dependency *(commit by [@WinDanesz](https://github.com/WinDanesz))*
+- [`43cb343`](https://github.com/WinDanesz/AncientSpellcraft/commit/43cb343304297efe0e418abf4b28452289e2ac19) - Added Lunar Flax. A rare plant that drops Enchanted Filament. The plant is only harvestable with Shears, and only during the night, otherwise it doesn't drop anything. Drops twise as much Filament during midnight. *(commit by [@WinDanesz](https://github.com/WinDanesz))*
+- [`a656b20`](https://github.com/WinDanesz/AncientSpellcraft/commit/a656b20f0a6eb2280a8cadffd666eafa9e49a99e) - Sage tomes render as 3D *(commit by [@WinDanesz](https://github.com/WinDanesz))*
+- [`68f15a6`](https://github.com/WinDanesz/AncientSpellcraft/commit/68f15a672c00db0f99ab154b5caae99f30a9383c) - The Eagle Eye spell can be interrupted early by a second cast. *(commit by [@WinDanesz](https://github.com/WinDanesz))*
+- [`08523f5`](https://github.com/WinDanesz/AncientSpellcraft/commit/08523f5b98929cfa8a246fcce520bd213b065855) - Added a lot more stuff *(commit by [@WinDanesz](https://github.com/WinDanesz))*
+
+### :bug: Bug Fixes
+- [`b101d6d`](https://github.com/WinDanesz/AncientSpellcraft/commit/b101d6df8d2180bbab40328649598bd135ee7960) - Can't overfill the Pensive artefact *(commit by [@WinDanesz](https://github.com/WinDanesz))*
+- [`438432d`](https://github.com/WinDanesz/AncientSpellcraft/commit/438432db946df82b94ce867367ba08b435c75852) - fixed pensive visual resetting *(commit by [@WinDanesz](https://github.com/WinDanesz))*
+- [`f5abf16`](https://github.com/WinDanesz/AncientSpellcraft/commit/f5abf165c07f6a8a391668abc874d5833989f89c) - Fixed Arcane Barrier ownership and radius resetting (and kicking players out of their own barrier) *(commit by [@WinDanesz](https://github.com/WinDanesz))*
+- [`2751c85`](https://github.com/WinDanesz/AncientSpellcraft/commit/2751c85535d51f1bfc15754a7838ecbea0bb3406) - Fixed a bug with Perfect Theory spells not overriding each other when a different Perfect Theory spell was bound to the same slot *(commit by [@WinDanesz](https://github.com/WinDanesz))*
+- [`ff8b433`](https://github.com/WinDanesz/AncientSpellcraft/commit/ff8b4336e0fe24927e1331f8512d1a4dda2dd9c2) - Battlemage tents no longer spawn too deep in the ground *(commit by [@WinDanesz](https://github.com/WinDanesz))*
+
+### :wrench: Chores
+- [`72aa050`](https://github.com/WinDanesz/AncientSpellcraft/commit/72aa0508f8f2d00521c074aa56bcfee5917af9d4) - update gitignore *(commit by [@WinDanesz](https://github.com/WinDanesz))*
+- [`e2b7a47`](https://github.com/WinDanesz/AncientSpellcraft/commit/e2b7a471a71444af76b61ca215ea11616e8d8c79) - Can't bind sage books to scrolls *(commit by [@WinDanesz](https://github.com/WinDanesz))*
+- [`3665fe1`](https://github.com/WinDanesz/AncientSpellcraft/commit/3665fe13914d0fc92aa60d301a0040ea95745f74) - update deps *(commit by [@WinDanesz](https://github.com/WinDanesz))*
+
+
 ## [v1.6.3] - 2024-02-03
 ### :sparkles: New Features
 - [`e927c27`](https://github.com/WinDanesz/AncientSpellcraft/commit/e927c27f387fb9d5719520a6a3cad89a8cdfcc65) - Added a help message upon interacting with an arcane barrier *(commit by [@WinDanesz](https://github.com/WinDanesz))*
@@ -345,3 +370,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [v1.6.1]: https://github.com/WinDanesz/AncientSpellcraft/compare/v1.6.0...v1.6.1
 [v1.6.2]: https://github.com/WinDanesz/AncientSpellcraft/compare/v1.6.1...v1.6.2
 [v1.6.3]: https://github.com/WinDanesz/AncientSpellcraft/compare/v1.6.2...v1.6.3
+[v1.7.0]: https://github.com/WinDanesz/AncientSpellcraft/compare/v1.6.3...v1.7.0
