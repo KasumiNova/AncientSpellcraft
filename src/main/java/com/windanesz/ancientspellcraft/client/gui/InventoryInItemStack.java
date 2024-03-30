@@ -9,6 +9,10 @@ import net.minecraft.nbt.NBTTagList;
 
 public class InventoryInItemStack extends InventoryBasic {
 
+	public ItemStack getStack() {
+		return stack;
+	}
+
 	private final ItemStack stack;
 
 	public InventoryInItemStack(String title, boolean customName, IItemWithSlots itemWithSlots, ItemStack stack) {

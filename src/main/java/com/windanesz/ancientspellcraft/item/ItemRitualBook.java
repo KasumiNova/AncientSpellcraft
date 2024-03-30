@@ -85,7 +85,7 @@ public class ItemRitualBook extends Item {
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
 		ItemStack stack = player.getHeldItem(hand);
 		Ritual ritual = getRitual(stack);
-		if (ritual != Rituals.none && !player.isSneaking()) {
+		if (ritual != Rituals.none && !player.isSneaking() && player.isCreative()) {
 			player.openGui(AncientSpellcraft.instance, GuiHandlerAS.RITUAL_BOOK, world, 0, 0, 0);
 		} else if (!world.isRemote && ritual != Rituals.none) {
 			NonNullList<Ingredient> pattern = ritual.getRitualProperties().pattern;

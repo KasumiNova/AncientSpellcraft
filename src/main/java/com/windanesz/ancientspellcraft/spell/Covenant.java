@@ -3,6 +3,7 @@ package com.windanesz.ancientspellcraft.spell;
 import com.google.common.base.Predicate;
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.entity.ai.EntityAIWizardFollowPlayer;
+import com.windanesz.ancientspellcraft.entity.living.EntityClassWizard;
 import com.windanesz.ancientspellcraft.registry.ASItems;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.data.IStoredVariable;
@@ -58,7 +59,7 @@ public class Covenant extends SpellRay {
 			@Nullable EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers) {
 		if (caster instanceof EntityPlayer) {
 
-			if (target instanceof EntityWizard) {
+			if (target instanceof EntityWizard && !(target instanceof EntityClassWizard)) {
 
 				EntityPlayer player = (EntityPlayer) caster;
 				EntityWizard wizard = (EntityWizard) target;
@@ -113,7 +114,7 @@ public class Covenant extends SpellRay {
 	}
 
 	// FIXME: wizards follow the player again after world reload
-	private static void endAlliance(EntityWizard wizard) {
+	public static void endAlliance(EntityWizard wizard) {
 
 		for (EntityAITasks.EntityAITaskEntry entityaitasks$entityaitaskentry : wizard.tasks.taskEntries) {
 			EntityAIBase entityAIBase = entityaitasks$entityaitaskentry.action;
@@ -123,7 +124,7 @@ public class Covenant extends SpellRay {
 		}
 	}
 
-	private static void allyWithWizard(EntityPlayer player, EntityWizard wizard) {
+	public static void allyWithWizard(EntityPlayer player, EntityWizard wizard) {
 
 		EntityAIWizardFollowPlayer task = new EntityAIWizardFollowPlayer(wizard, 1f, 6, 10, player);
 		wizard.tasks.addTask(2, task);
@@ -188,7 +189,7 @@ public class Covenant extends SpellRay {
 		};
 	}
 
-	private static boolean isAlreadyFollowing(EntityWizard wizard) {
+	public static boolean isAlreadyFollowing(EntityWizard wizard) {
 		for (EntityAITasks.EntityAITaskEntry entityaitasks$entityaitaskentry : wizard.tasks.taskEntries) {
 			EntityAIBase entityAIBase = entityaitasks$entityaitaskentry.action;
 			if (entityAIBase instanceof EntityAIWizardFollowPlayer) {

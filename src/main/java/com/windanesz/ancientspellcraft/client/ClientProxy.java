@@ -13,6 +13,7 @@ import com.windanesz.ancientspellcraft.client.renderer.RenderArcaneBarrierEventB
 import com.windanesz.ancientspellcraft.client.renderer.RenderChaosOrb;
 import com.windanesz.ancientspellcraft.client.renderer.RenderMerchantWizard;
 import com.windanesz.ancientspellcraft.client.renderer.entity.RenderAnimatedItem;
+import com.windanesz.ancientspellcraft.client.renderer.entity.RenderClassWizard;
 import com.windanesz.ancientspellcraft.client.renderer.entity.RenderDevoritiumArrow;
 import com.windanesz.ancientspellcraft.client.renderer.entity.RenderEntityMageLight;
 import com.windanesz.ancientspellcraft.client.renderer.entity.RenderEvilClassWizard;
@@ -41,6 +42,7 @@ import com.windanesz.ancientspellcraft.entity.construct.EntityAntiMagicField;
 import com.windanesz.ancientspellcraft.entity.construct.EntityArcaneBarrier;
 import com.windanesz.ancientspellcraft.entity.construct.EntityBarterConstruct;
 import com.windanesz.ancientspellcraft.entity.construct.EntityBuilder;
+import com.windanesz.ancientspellcraft.entity.construct.EntityChaosField;
 import com.windanesz.ancientspellcraft.entity.construct.EntityHealingSigil;
 import com.windanesz.ancientspellcraft.entity.construct.EntityMoltenBoulder;
 import com.windanesz.ancientspellcraft.entity.construct.EntitySilencingSigil;
@@ -48,6 +50,7 @@ import com.windanesz.ancientspellcraft.entity.construct.EntitySpellTicker;
 import com.windanesz.ancientspellcraft.entity.construct.EntitySpiritWard;
 import com.windanesz.ancientspellcraft.entity.construct.EntityTransportationPortal;
 import com.windanesz.ancientspellcraft.entity.living.EntityAnimatedItem;
+import com.windanesz.ancientspellcraft.entity.living.EntityClassWizard;
 import com.windanesz.ancientspellcraft.entity.living.EntityCreeperMinion;
 import com.windanesz.ancientspellcraft.entity.living.EntityEvilClassWizard;
 import com.windanesz.ancientspellcraft.entity.living.EntityFireAnt;
@@ -245,6 +248,7 @@ public class ClientProxy extends CommonProxy {
 
 		////////// NO render //////////
 		RenderingRegistry.registerEntityRenderingHandler(EntityAntiMagicField.class, RenderBlank::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityChaosField.class, RenderBlank::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityManaVortex.class, RenderBlank::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityDevoritiumArrow.class, RenderDevoritiumArrow::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpellCaster.class, RenderBlank::new);
@@ -252,6 +256,7 @@ public class ClientProxy extends CommonProxy {
 		//RenderingRegistry.registerEntityRenderingHandler(EntityClassWizard.class, RenderWizard::new);
 		//RenderingRegistry.registerEntityRenderingHandler(EntityEvilWizardAS.class, RenderEvilWizard::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityEvilClassWizard.class, RenderEvilClassWizard::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityClassWizard.class, RenderClassWizard::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityBarterConstruct.class, RenderBlank::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpellTicker.class, RenderBlank::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityBuilder.class, RenderBlank::new);

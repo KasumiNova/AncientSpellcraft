@@ -1,7 +1,9 @@
 package com.windanesz.ancientspellcraft.ritual;
 
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
+import com.windanesz.ancientspellcraft.spell.WarlockElementalSpellEffects;
 import com.windanesz.ancientspellcraft.tileentity.TileRune;
+import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.data.IStoredVariable;
 import electroblob.wizardry.data.Persistence;
 import electroblob.wizardry.data.WizardData;
@@ -46,9 +48,12 @@ public class WarlockAttunement extends Ritual {
 		data.sync();
 
 		if (caster != null && !world.isRemote) {
-			caster.sendMessage(new TextComponentTranslation("ritual.ancientspellcraft:warlock_attunement.attuned", centerPiece.getX(), centerPiece.getY(), centerPiece.getZ()));
+			if (isWarlockAttuned(caster)) {
+				caster.sendMessage(new TextComponentTranslation("ritual.ancientspellcraft:warlock_attunement.attuned", centerPiece.getX(), centerPiece.getY(), centerPiece.getZ()));
+			} else {
+				caster.sendMessage(new TextComponentTranslation("ritual.ancientspellcraft:warlock_attunement.not_attuned", centerPiece.getX(), centerPiece.getY(), centerPiece.getZ()));
+			}
 		}
-
 		super.onRitualFinish(world, caster, centerPiece);
 	}
 
@@ -57,16 +62,17 @@ public class WarlockAttunement extends Ritual {
 		super.effect(world, caster, centerPiece);
 
 		if (world.isRemote) {
+			int[] color = WarlockElementalSpellEffects.PARTICLE_COLOURS.get(Element.MAGIC);
 			Vec3d target = new Vec3d(centerPiece.getXCenter(), 256, centerPiece.getZCenter());
 			if (world.getTotalWorldTime() % 7 == 0) {
-				ParticleBuilder.create(ParticleBuilder.Type.BEAM).clr(252, 252, 159)
+				ParticleBuilder.create(ParticleBuilder.Type.BEAM).clr(color[0])
 						.pos(centerPiece.getXCenter(), centerPiece.getYCenter() - 0.5f, centerPiece.getZCenter()).scale(2f).time(10).target(target).spawn(world);
 			}
-			ParticleBuilder.create(ParticleBuilder.Type.BEAM).clr(252, 252, 159)
+			ParticleBuilder.create(ParticleBuilder.Type.BEAM).clr(color[0])
 					.pos(centerPiece.getXCenter(), centerPiece.getYCenter() - 0.5f, centerPiece.getZCenter()).scale(1f).time(5).target(target).spawn(world);
 
-			ParticleBuilder.create(ParticleBuilder.Type.FLASH).clr(252, 252, 159).pos(centerPiece.getXCenter(), centerPiece.getYCenter(), centerPiece.getZCenter()).scale(2f).spawn(world);
-			ParticleBuilder.create(ParticleBuilder.Type.FLASH).clr(255, 255, 247).pos(centerPiece.getXCenter(), centerPiece.getYCenter() + 0.5f, centerPiece.getZCenter()).scale(0.9f).spawn(world);
+			ParticleBuilder.create(ParticleBuilder.Type.FLASH).clr(color[0]).pos(centerPiece.getXCenter(), centerPiece.getYCenter(), centerPiece.getZCenter()).scale(2f).spawn(world);
+			ParticleBuilder.create(ParticleBuilder.Type.FLASH).clr(color[0]).pos(centerPiece.getXCenter(), centerPiece.getYCenter() + 0.5f, centerPiece.getZCenter()).scale(0.9f).spawn(world);
 		}
 	}
 }

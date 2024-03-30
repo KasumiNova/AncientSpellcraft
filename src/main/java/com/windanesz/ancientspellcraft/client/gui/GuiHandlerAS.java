@@ -40,6 +40,7 @@ public class GuiHandlerAS implements IGuiHandler {
 	public static final int BATTLEMAGE_SHIELD = nextGuiId++;
 	public static final int SPELL_BOOK_SAGE = nextGuiId++;
 	public static final int SPELL_BOOK_WARLOCK = nextGuiId++;
+	public static final int GUI_1_SLOT = nextGuiId++;
 
 	@Override
 	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
@@ -60,6 +61,10 @@ public class GuiHandlerAS implements IGuiHandler {
 		} else if (id == BATTLEMAGE_SHIELD) {
 			ItemStack stack = player.getHeldItem(EnumHand.values()[x]);
 			InventoryInItemStack inventory = new InventoryInItemStack("Runic Shield", true, (IItemWithSlots) stack.getItem(), stack);
+			return new ContainerBattlemageShield(player.inventory, inventory, player);
+		} else if (id == GUI_1_SLOT) {
+			ItemStack stack = player.getHeldItem(EnumHand.values()[x]);
+			InventoryInItemStack inventory = new InventoryInItemStack("", true, (IItemWithSlots) stack.getItem(), stack);
 			return new ContainerInventoryInItemStack(player.inventory, inventory, player);
 		}
 		return null;
@@ -161,8 +166,14 @@ public class GuiHandlerAS implements IGuiHandler {
 			if (player.getHeldItemMainhand().getItem() instanceof ItemBattlemageShield) {
 				ItemStack stack = player.getHeldItem(EnumHand.values()[x]);
 				InventoryInItemStack inventory = new InventoryInItemStack("Battlemage Shield", true, (IItemWithSlots) stack.getItem(), stack);
-				return new GuiScreenInventoryInItem(inventory, player, "battlemage_shield");
+				return new GuiScreenBattlemageShield(inventory, player, "battlemage_shield");
 			}
+		}
+
+		if (id == GUI_1_SLOT) {
+			ItemStack stack = player.getHeldItem(EnumHand.values()[x]);
+			InventoryInItemStack inventory = new InventoryInItemStack("", true, (IItemWithSlots) stack.getItem(), stack);
+			return new GuiScreenInventoryInItem(inventory, player, "gui_1_slot");
 		}
 
 		return null;

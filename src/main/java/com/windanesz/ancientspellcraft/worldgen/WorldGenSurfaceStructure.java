@@ -59,7 +59,7 @@ public abstract class WorldGenSurfaceStructure extends WorldGenWizardryStructure
 		if(centre.getY() >= world.getActualHeight()) centre = new BlockPos(centre.getX(), random.nextInt(world.getActualHeight()), centre.getZ());
 
 		Integer startingHeight = BlockUtils.getNearestSurface(world, centre, EnumFacing.UP, 32, true,
-				BlockUtils.SurfaceCriteria.COLLIDABLE_IGNORING_TREES);
+				BlockUtils.SurfaceCriteria.BUILDABLE);
 
 		if(startingHeight == null) return null;
 

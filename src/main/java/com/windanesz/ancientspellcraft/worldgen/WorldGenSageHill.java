@@ -3,11 +3,17 @@ package com.windanesz.ancientspellcraft.worldgen;
 import com.google.common.collect.ImmutableMap;
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.Settings;
+import com.windanesz.ancientspellcraft.entity.living.EntityClassWizard;
 import com.windanesz.ancientspellcraft.entity.living.EntityEvilClassWizard;
+import com.windanesz.ancientspellcraft.entity.living.EntitySkeletonMage;
+import com.windanesz.ancientspellcraft.entity.living.EntitySkeletonMageMinion;
 import com.windanesz.ancientspellcraft.integration.antiqueatlas.ASAntiqueAtlasIntegration;
+import com.windanesz.ancientspellcraft.tileentity.TileSageLectern;
 import electroblob.wizardry.Wizardry;
+import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.entity.living.EntityWizard;
 import electroblob.wizardry.item.ItemWizardArmour;
+import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.registry.WizardryAdvancementTriggers;
 import electroblob.wizardry.tileentity.TileEntityBookshelf;
 import electroblob.wizardry.util.BlockUtils;
@@ -49,6 +55,7 @@ public class WorldGenSageHill extends WorldGenSurfaceStructureAS {
 
 	private static final String WIZARD_DATA_BLOCK_TAG = "wizard";
 	private static final String EVIL_WIZARD_DATA_BLOCK_TAG = "evil_wizard";
+	private static final String SKELETON_MAGE_DATA_BLOCK_TAG = "skeleton_mage";
 
 	private final Map<BiomeDictionary.Type, IBlockState> specialWallBlocks;
 
@@ -80,7 +87,7 @@ public class WorldGenSageHill extends WorldGenSurfaceStructureAS {
 
 	@Override
 	public ResourceLocation getStructureFile(Random random) {
-		return AncientSpellcraft.settings.sageHillWithChestFiles[0];
+		return AncientSpellcraft.settings.sageHillWithChestFiles[random.nextInt(AncientSpellcraft.settings.sageHillWithChestFiles.length)];
 	}
 
 	@Override
@@ -129,7 +136,12 @@ public class WorldGenSageHill extends WorldGenSurfaceStructureAS {
 				(w, p, i) -> {
 					TileEntityBookshelf.markAsNatural(i.tileentityData);
 					return i;
+				},
+				(w, p, i) -> {
+					TileSageLectern.markAsNatural(i.tileentityData);
+					return i;
 				}
+
 		);
 
 		template.addBlocksToWorld(world, origin, processor, settings, 2 | 16);
@@ -177,25 +189,38 @@ public class WorldGenSageHill extends WorldGenSurfaceStructureAS {
 
 			Vec3d vec = GeometryUtils.getCentre(entry.getKey());
 
-			if (entry.getValue().equals(WIZARD_DATA_BLOCK_TAG)) {
+			switch (entry.getValue()) {
+				case WIZARD_DATA_BLOCK_TAG: {
 
-				EntityWizard wizard = new EntityWizard(world);
-				wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
-				wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
-				wizard.setTowerBlocks(blocksPlaced);
-				world.spawnEntity(wizard);
+					EntityClassWizard wizard = new EntityClassWizard(world);
+					wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
+					wizard.setArmourClass(ItemWizardArmour.ArmourClass.SAGE);
+					wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
+					wizard.setTowerBlocks(blocksPlaced);
+					world.spawnEntity(wizard);
 
-			} else if (entry.getValue().equals(EVIL_WIZARD_DATA_BLOCK_TAG)) {
+					break;
+				}
+				case EVIL_WIZARD_DATA_BLOCK_TAG: {
+					EntityEvilClassWizard wizard = new EntityEvilClassWizard(world);
+					wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
+					wizard.hasStructure = true; // Stops it despawning
+					wizard.setArmourClass(ItemWizardArmour.ArmourClass.SAGE);
+					wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
+					world.spawnEntity(wizard);
+					break;
+				}
+				case SKELETON_MAGE_DATA_BLOCK_TAG:
 
-				EntityEvilClassWizard wizard = new EntityEvilClassWizard(world);
-				wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
-				wizard.hasStructure = true; // Stops it despawning
-				wizard.armourClass = ItemWizardArmour.ArmourClass.SAGE;
-				wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
-				world.spawnEntity(wizard);
-			} else {
-				// This probably shouldn't happen...
-				Wizardry.logger.info("Unrecognised data block value {} in structure {}", entry.getValue(), structureFile);
+					EntitySkeletonMage skeleton = new EntitySkeletonMage(world);
+					skeleton.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
+					skeleton.onInitialSpawn(world.getDifficultyForLocation(origin), null);
+					world.spawnEntity(skeleton);
+					break;
+				default:
+					// This probably shouldn't happen...
+					Wizardry.logger.info("Unrecognised data block value {} in structure {}", entry.getValue(), structureFile);
+					break;
 			}
 
 		}

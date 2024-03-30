@@ -2,6 +2,7 @@ package com.windanesz.ancientspellcraft.spell;
 
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.entity.living.EntityAnimatedItem;
+import com.windanesz.ancientspellcraft.entity.living.EntityClassWizard;
 import com.windanesz.ancientspellcraft.entity.living.EntityEvilClassWizard;
 import com.windanesz.ancientspellcraft.item.ItemBattlemageSword;
 import com.windanesz.ancientspellcraft.item.ItemSageTome;
@@ -44,7 +45,7 @@ public interface IClassSpell {
 		if (caster instanceof EntityPlayer) {
 			ItemWizardArmour.ArmourClass armourClass = spell.getArmourClass();
 
-			if (armourClass != ItemWizardArmour.ArmourClass.WARLOCK && !WarlockAttunement.isWarlockAttuned((EntityPlayer) caster)) {
+			if (armourClass != ItemWizardArmour.ArmourClass.WARLOCK && WarlockAttunement.isWarlockAttuned((EntityPlayer) caster)) {
 				ASUtils.sendMessage(caster, "message." + AncientSpellcraft.MODID + ":warlock_attunement_prevents_spell_cast", true);
 				event.setCanceled(true);
 				return;
@@ -95,7 +96,7 @@ public interface IClassSpell {
 	}
 
 	default boolean canBeCastByClassNPC(EntityLivingBase npc) {
-		return npc instanceof EntityEvilClassWizard;
+		return npc instanceof EntityEvilClassWizard || npc instanceof EntityClassWizard;
 	}
 
 }

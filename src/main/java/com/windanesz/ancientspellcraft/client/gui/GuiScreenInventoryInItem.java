@@ -4,6 +4,7 @@ import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -15,7 +16,7 @@ public class GuiScreenInventoryInItem extends GuiContainer {
 	private final ResourceLocation GUI_BACKGROUND;
 
 	public GuiScreenInventoryInItem(IInventory inventory, EntityPlayer player, String texture) {
-		super(new ContainerInventoryInItemStack(player.inventory, inventory, player));
+		super(new ContainerInventoryInItemStack(player.inventory, inventory, player) {});
 		this.xSize = 176;
 		this.ySize = 223;
 		this.GUI_BACKGROUND = new ResourceLocation(AncientSpellcraft.MODID, "textures/gui/" + texture + ".png");

@@ -41,6 +41,7 @@ import com.windanesz.ancientspellcraft.block.BlockMushroomWither;
 import com.windanesz.ancientspellcraft.block.BlockPlacedRune;
 import com.windanesz.ancientspellcraft.block.BlockQuickSand;
 import com.windanesz.ancientspellcraft.block.BlockRuinedImbuementAltar;
+import com.windanesz.ancientspellcraft.block.BlockSageFlax;
 import com.windanesz.ancientspellcraft.block.BlockSageLectern;
 import com.windanesz.ancientspellcraft.block.BlockScribingDesk;
 import com.windanesz.ancientspellcraft.block.BlockSealedStone;
@@ -67,6 +68,7 @@ import com.windanesz.ancientspellcraft.tileentity.TileSentinel;
 import com.windanesz.ancientspellcraft.tileentity.TileSkullWatch;
 import com.windanesz.ancientspellcraft.tileentity.TileSphereCognizance;
 import electroblob.wizardry.constants.Element;
+import electroblob.wizardry.registry.WizardryTabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
@@ -126,6 +128,7 @@ public class ASBlocks {
 	public static final Block ASTRAL_DIAMOND_ORE = placeholder();
 
 	public static final Block DEVORITIUM_BLOCK = placeholder();
+	public static final Block DEVORITIUM_GILDED_STONE = placeholder();
 	public static final Block DEVORITIUM_ORE = placeholder();
 	public static final Block DEVORITIUM_BARS = placeholder();
 	public static final Block DEVORITIUM_DOOR = placeholder();
@@ -167,6 +170,8 @@ public class ASBlocks {
 	public static final Block sealed_stone = placeholder();
 	public static final Block unsealed_stone = placeholder();
 	public static final Block unseal_button = placeholder();
+	public static final Block sage_flax_day = placeholder();
+	public static final Block sage_flax = placeholder();
 
 
 	public static void registerBlock(IForgeRegistry<Block> registry, String name, Block block) {
@@ -221,6 +226,7 @@ public class ASBlocks {
 		registerBlock(registry, "astral_diamond_ore", new BlockAstralDiamondOre());
 
 		registerBlock(registry, "devoritium_block", new BlockDevoritium());
+		registerBlock(registry, "devoritium_gilded_stone", new BlockDevoritium());
 		registerBlock(registry, "devoritium_door", new BlockDevoritiumDoor());
 		registerBlock(registry, "devoritium_ore", new BlockDevoritiumOre());
 		registerBlock(registry, "devoritium_bars", new BlockDevoritiumBars());
@@ -247,6 +253,8 @@ public class ASBlocks {
 		registerBlock(registry, "mushroom_empowering", new BlockMushroomEmpowering());
 		registerBlock(registry, "arcane_anvil", new BlockArcaneAnvil());
 		registerBlock(registry, "sage_lectern", new BlockSageLectern());
+		registerBlock(registry, "sage_flax_day", new BlockSageFlax(Material.PLANTS).setHardness(0.0F).setCreativeTab(ASTabs.ANCIENTSPELLCRAFT));;
+		registerBlock(registry, "sage_flax", new BlockSageFlax(Material.PLANTS).setHardness(0.0F).setCreativeTab(ASTabs.ANCIENTSPELLCRAFT));;
 
 
 		registerBlock(registry, "quicksand", new BlockQuickSand());

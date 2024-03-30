@@ -2,8 +2,10 @@ package com.windanesz.ancientspellcraft.client;
 
 import com.windanesz.ancientspellcraft.client.entity.ASFakePlayer;
 import com.windanesz.ancientspellcraft.registry.ASPotions;
+import com.windanesz.ancientspellcraft.spell.ScryingOrb;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -47,8 +49,11 @@ public class ClientEventHandler {
 
 			if (EAGLE_EYE_ENABLED || ASTRAL_TRAVEL_ENABLED) {
 
-				ASFakePlayer.FAKE_PLAYER.setLocationAndAngles(x, y, z, Minecraft.getMinecraft().player.rotationYaw,
-						Minecraft.getMinecraft().player.rotationPitch);
+ //else {
+					ASFakePlayer.FAKE_PLAYER.setLocationAndAngles(x, y, z, Minecraft.getMinecraft().player.rotationYaw,
+							Minecraft.getMinecraft().player.rotationPitch);
+				//}
+
 
 				ASFakePlayer.FAKE_PLAYER.prevRotationPitch = previousPitch;
 				ASFakePlayer.FAKE_PLAYER.prevRotationYaw = pirevousYaw;
@@ -63,7 +68,14 @@ public class ClientEventHandler {
 				previousZ = z;
 				previousPitch = Minecraft.getMinecraft().player.rotationPitch;
 				pirevousYaw = Minecraft.getMinecraft().player.rotationYaw;
+				if (ScryingOrb.isScrying(event.player)) {
+					BlockPos pos = ScryingOrb.getBlockPos(event.player);
+					ASFakePlayer.FAKE_PLAYER.setLocationAndAngles(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, Minecraft.getMinecraft().player.rotationYaw,
+							Minecraft.getMinecraft().player.rotationPitch);
+
+				}
 			} else if (Minecraft.getMinecraft().getRenderViewEntity() == ASFakePlayer.FAKE_PLAYER) {
+
 				Minecraft.getMinecraft().setRenderViewEntity(Minecraft.getMinecraft().player);
 			}
 

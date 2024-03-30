@@ -8,8 +8,10 @@ import com.windanesz.ancientspellcraft.entity.projectile.EntityContingencyProjec
 import com.windanesz.ancientspellcraft.entity.projectile.EntityMetamagicProjectile;
 import com.windanesz.ancientspellcraft.integration.artemislib.ASArtemisLibIntegration;
 import com.windanesz.ancientspellcraft.integration.baubles.ASBaublesIntegration;
+import com.windanesz.ancientspellcraft.item.AbstractItemArtefactWithSlots;
 import com.windanesz.ancientspellcraft.item.ItemBattlemageShield;
 import com.windanesz.ancientspellcraft.item.ItemBeltScrollHolder;
+import com.windanesz.ancientspellcraft.item.ItemFocusStone;
 import com.windanesz.ancientspellcraft.item.ItemManaArtefact;
 import com.windanesz.ancientspellcraft.item.ItemRitualBook;
 import com.windanesz.ancientspellcraft.item.ItemSoulboundWandUpgrade;
@@ -53,6 +55,7 @@ import electroblob.wizardry.event.SpellCastEvent;
 import electroblob.wizardry.integration.DamageSafetyChecker;
 import electroblob.wizardry.item.IManaStoringItem;
 import electroblob.wizardry.item.ItemArtefact;
+import electroblob.wizardry.item.ItemCrystal;
 import electroblob.wizardry.item.ItemScroll;
 import electroblob.wizardry.item.ItemWand;
 import electroblob.wizardry.item.ItemWandUpgrade;
@@ -131,6 +134,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.windanesz.ancientspellcraft.item.EnumElementalSwordEffect.getAngleBetweenEntities;
 import static electroblob.wizardry.constants.Constants.*;
 import static electroblob.wizardry.item.ItemArtefact.getActiveArtefacts;
 import static electroblob.wizardry.item.ItemArtefact.isArtefactActive;
@@ -441,7 +445,12 @@ public class ASEventHandler {
 					}
 				}
 
-				if (artefact == ASItems.charm_cryostasis) {
+				if (artefact == ASItems.amulet_time_slow && !player.getCooldownTracker().hasCooldown(ASItems.amulet_time_slow)) {
+					if ((player.getHealth() <= 6 || (player.getHealth() - event.getAmount() <= 6))) {
+						player.addPotionEffect(new PotionEffect(WizardryPotions.slow_time, 120));
+						player.getCooldownTracker().setCooldown(ASItems.amulet_time_slow, 9600);
+					}
+				} else if (artefact == ASItems.charm_cryostasis) {
 					if ((player.getHealth() <= 6 || (player.getHealth() - event.getAmount() <= 6)) && player.world.rand.nextFloat() < 0.25f) {
 						ASSpells.cryostasis.cast(player.world, player, player.getActiveHand(), 0, new SpellModifiers());
 					}
@@ -512,12 +521,24 @@ public class ASEventHandler {
 				} else if (artefact == ASItems.belt_soul_scorch && event.getSource().getImmediateSource() instanceof EntityLivingBase) {
 					((EntityLivingBase) event.getSource().getImmediateSource()).addPotionEffect(new PotionEffect(ASPotions.soul_scorch, 60));
 				} else if (artefact == ASItems.ring_undeath && !player.isPotionActive(WizardryPotions.curse_of_undeath)) {
-					if (player.getHealth() - event.getAmount() <= 0 && !player.getCooldownTracker().hasCooldown(ASItems.ring_undeath))  {
+					if (player.getHealth() - event.getAmount() <= 0 && !player.getCooldownTracker().hasCooldown(ASItems.ring_undeath)) {
 						player.addPotionEffect(new PotionEffect(WizardryPotions.curse_of_undeath, Integer.MAX_VALUE, 0));
 						player.getCooldownTracker().setCooldown(ASItems.ring_undeath, 6000);
 						ASUtils.sendMessage(player, "item.ancientspellcraft:ring_undeath.resurrect", true);
 						event.setAmount(0);
 						player.heal(player.getMaxHealth() * Settings.generalSettings.ring_of_undeath_heal_amount);
+					}
+				} else if (artefact == ASItems.amulet_elemental_defense) {
+					List<ItemStack> amuletz = ASBaublesIntegration.getEquippedArtefactStacks(player, ItemArtefact.Type.AMULET);
+					if (amuletz.size() == 1) {
+						ItemStack amulet = amuletz.get(0);
+						if (AbstractItemArtefactWithSlots.getItemForSlot(amulet, 0).getItem() instanceof ItemCrystal) {
+							ItemStack crystal = AbstractItemArtefactWithSlots.getItemForSlot(amulet, 0);
+							Optional<Element> e = ASUtils.getDamageTypeElement(event.getSource().getDamageType());
+							if (e.isPresent() && Element.values()[crystal.getMetadata()] == e.get()) {
+								event.setAmount(event.getAmount() * 0.7f);
+							}
+						}
 					}
 				}
 			}
@@ -626,6 +647,11 @@ public class ASEventHandler {
 		}
 
 		if ((event.getPotionEffect().getPotion() == ASPotions.astral_projection || event.getPotionEffect().getPotion() == ASPotions.eagle_eye) && !(event.getEntityLiving() instanceof EntityPlayer)) {
+			event.setResult(Event.Result.DENY);
+		}
+
+		if ((event.getPotionEffect().getPotion() == MobEffects.SLOWNESS) && (event.getEntityLiving() instanceof EntityPlayer
+				&& ItemArtefact.isArtefactActive((EntityPlayer) event.getEntityLiving(), ASItems.belt_temporal_anchor))) {
 			event.setResult(Event.Result.DENY);
 		}
 
@@ -1073,8 +1099,75 @@ public class ASEventHandler {
 
 			/// custom artefact types
 			for (ItemArtefact artefact : getActiveArtefacts(player)) {
+				if (artefact == ASItems.ring_shivering && event.getSpell().getElement() == Element.ICE && !player.getCooldownTracker().hasCooldown(ASItems.ring_shivering)) {
+					player.getCooldownTracker().setCooldown(ASItems.ring_shivering, 100);
+					for (EntityLivingBase currTarget : EntityUtils.getEntitiesWithinRadius(4, player.posX, player.posY, player.posZ, player.world, EntityLivingBase.class)) {
 
-				if (artefact == ASItems.head_curse) {
+						if (currTarget == player || AllyDesignationSystem.isAllied(player, currTarget)) {
+							continue;
+						}
+
+						if (!MagicDamage.isEntityImmune(MagicDamage.DamageType.FROST, currTarget)) {
+							EntityUtils.attackEntityWithoutKnockback(currTarget, MagicDamage.causeDirectMagicDamage(player, MagicDamage.DamageType.FROST), 3.5f);
+							currTarget.addPotionEffect(new PotionEffect(WizardryPotions.frost, 60, 0));
+						}
+
+						double angle = (getAngleBetweenEntities(player, currTarget) + 90) * Math.PI / 180;
+						double distance = player.getDistance(currTarget) - 4;
+						currTarget.motionX += Math.min(1 / (distance * distance), 1) * -1 * Math.cos(angle);
+						currTarget.motionZ += Math.min(1 / (distance * distance), 1) * -1 * Math.sin(angle);
+
+					}
+					if (player.world.isRemote) {
+						double particleX, particleZ;
+
+						for (int i = 0; i < 10; i++) {
+
+							particleX = player.posX - 1.0d + 2 * player.world.rand.nextDouble();
+							particleZ = player.posZ - 1.0d + 2 * player.world.rand.nextDouble();
+							ParticleBuilder.create(ParticleBuilder.Type.ICE)
+									.pos(particleX, player.posY + 1, particleZ)
+									.vel((particleX - player.posX) * 0.3, 0, (particleZ - player.posZ) * 0.3)
+									.time(20)
+									.spawn(player.world);
+
+						}
+
+						for (int i = 0; i < 40; i++) {
+
+							particleX = player.posX - 1.0d + 2 * player.world.rand.nextDouble();
+							particleZ = player.posZ - 1.0d + 2 * player.world.rand.nextDouble();
+							ParticleBuilder.create(ParticleBuilder.Type.SNOW)
+									.pos(particleX, player.posY + 1, particleZ)
+									.vel((particleX - player.posX) * 0.3, 0, (particleZ - player.posZ) * 0.3)
+									.time(20)
+									.spawn(player.world);
+
+						}
+					}
+				} else if (artefact == ASItems.charm_focus_stone && !player.world.isRemote && !player.getCooldownTracker().hasCooldown(ASItems.charm_focus_stone)) {
+					List<ItemStack> list = ASBaublesIntegration.getEquippedArtefactStacks(player, ItemArtefact.Type.CHARM);
+					if (!list.isEmpty() && list.get(0).getItem() instanceof ItemFocusStone) {
+						player.getCooldownTracker().setCooldown(ASItems.charm_focus_stone, 5);
+						ItemStack stack = list.get(0);
+						float charge = ItemFocusStone.getCharge(stack);
+						if (charge < 1f) {
+							if (charge + 0.1f >= 0.9f) {
+								ASUtils.sendMessage(player, "item.ancientspellcraft:charm_focus_stone.charged_n", false, (int) ((charge + 0.1f) * 100));
+							}
+							ItemFocusStone.addCharge(stack, 0.1f);
+							ASBaublesIntegration.setArtefactToSlot(player, stack, ItemArtefact.Type.CHARM);
+						} else if (charge == 1f) {
+							ItemFocusStone.resetCharge(stack);
+							ASBaublesIntegration.setArtefactToSlot(player, stack, ItemArtefact.Type.CHARM);
+							modifiers.set(SpellModifiers.POTENCY, modifiers.get(SpellModifiers.POTENCY) + 0.3f, true);
+							modifiers.set(WizardryItems.blast_upgrade, modifiers.get(WizardryItems.blast_upgrade) + 0.75f, true);
+							modifiers.set(WizardryItems.range_upgrade, modifiers.get(WizardryItems.range_upgrade) + 0.75f, true);
+							modifiers.set(WizardryItems.duration_upgrade, modifiers.get(WizardryItems.duration_upgrade) + 0.75f, false);
+							modifiers.set(WizardryItems.siphon_upgrade, modifiers.get(WizardryItems.siphon_upgrade) + 0.75f, false);
+						}
+					}
+				} else if (artefact == ASItems.head_curse) {
 					float potency = modifiers.get(SpellModifiers.POTENCY);
 					float potencyBonus = 1;
 					for (Potion potion : player.getActivePotionMap().keySet()) {
@@ -1116,7 +1209,18 @@ public class ASEventHandler {
 				float potency = modifiers.get(SpellModifiers.POTENCY);
 				float cost = modifiers.get(SpellModifiers.COST);
 
-				if (artefact == ASItems.charm_mana_orb) {
+				if (artefact == ASItems.amulet_elemental_offense) {
+					List<ItemStack> amuletz = ASBaublesIntegration.getEquippedArtefactStacks(player, ItemArtefact.Type.AMULET);
+					if (amuletz.size() == 1) {
+						ItemStack amulet = amuletz.get(0);
+						if (AbstractItemArtefactWithSlots.getItemForSlot(amulet, 0).getItem() instanceof ItemCrystal) {
+							ItemStack crystal = AbstractItemArtefactWithSlots.getItemForSlot(amulet, 0);
+							if (Element.values()[crystal.getMetadata()] == event.getSpell().getElement()) {
+								event.getModifiers().set(SpellModifiers.POTENCY, event.getModifiers().get(SpellModifiers.POTENCY) + 0.05F, true);
+							}
+						}
+					}
+				} else if (artefact == ASItems.charm_mana_orb) {
 					modifiers.set(SpellModifiers.COST, 0.85f * cost, false);
 
 				} else if (artefact == ASItems.amulet_mana) {
@@ -1229,10 +1333,10 @@ public class ASEventHandler {
 				if (elementOptional.isPresent()) {
 					int mod = event.getSpell().getElement() == elementOptional.get() ? 1 : -1;
 					// buffs modifiers for the matching element, weakens others
-						modifiers.set(WizardryItems.blast_upgrade, modifiers.get(WizardryItems.blast_upgrade) + (mod * 0.25f), false);
-						modifiers.set(WizardryItems.range_upgrade, modifiers.get(WizardryItems.range_upgrade) + (mod * 0.25f), false);
-						modifiers.set(WizardryItems.duration_upgrade, modifiers.get(WizardryItems.duration_upgrade) + (mod * 0.25f), false);
-						modifiers.set(WizardryItems.siphon_upgrade, modifiers.get(WizardryItems.siphon_upgrade) + (mod * 0.25f), false);
+					modifiers.set(WizardryItems.blast_upgrade, modifiers.get(WizardryItems.blast_upgrade) + (mod * 0.25f), false);
+					modifiers.set(WizardryItems.range_upgrade, modifiers.get(WizardryItems.range_upgrade) + (mod * 0.25f), false);
+					modifiers.set(WizardryItems.duration_upgrade, modifiers.get(WizardryItems.duration_upgrade) + (mod * 0.25f), false);
+					modifiers.set(WizardryItems.siphon_upgrade, modifiers.get(WizardryItems.siphon_upgrade) + (mod * 0.25f), false);
 				}
 
 				if (!(event.getSpell() instanceof Contingency)) {
@@ -1448,7 +1552,7 @@ public class ASEventHandler {
 
 			if (!event.player.world.isRemote && event.player.ticksExisted % 6 == 0) {
 
-				if (event.player.dimension == ASDimensions.POCKET_DIM_ID && !event.player.isPotionActive(ASPotions.dimensional_anchor)){
+				if (event.player.dimension == ASDimensions.POCKET_DIM_ID && !event.player.isPotionActive(ASPotions.dimensional_anchor)) {
 					event.player.addPotionEffect(new PotionEffect(ASPotions.dimensional_anchor, 200000));
 				}
 
@@ -1489,14 +1593,14 @@ public class ASEventHandler {
 						for (EntityLivingBase target : EntityUtils.getEntitiesWithinRadius(ASSpells.absorb_potion.getProperty(AbsorbPotion.EFFECT_RADIUS).floatValue(), player.posX, player.posY, player.posZ, player.world, EntityLivingBase.class)) {
 							if (target == player || potion != MobEffects.INVISIBILITY) {
 
-							ParticleBuilder.create(ParticleBuilder.Type.SCORCH)
-									.pos(target.posX, target.posY + 0.101, target.posZ)
-									.face(EnumFacing.UP)
-									.clr(potion.getLiquidColor())
-									.collide(false)
-									.scale(2.3F)
-									.time(40)
-									.spawn(event.player.world);
+								ParticleBuilder.create(ParticleBuilder.Type.SCORCH)
+										.pos(target.posX, target.posY + 0.101, target.posZ)
+										.face(EnumFacing.UP)
+										.clr(potion.getLiquidColor())
+										.collide(false)
+										.scale(2.3F)
+										.time(40)
+										.spawn(event.player.world);
 
 							}
 						}

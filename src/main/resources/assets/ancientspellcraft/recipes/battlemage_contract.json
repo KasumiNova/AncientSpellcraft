@@ -1,0 +1,25 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "FPI",
+        "SSS"
+    ],
+    "key": {
+        "S": {
+            "item": "ancientspellcraft:astral_diamond_shard"
+        },
+        "P": {
+            "item": "ebwizardry:blank_scroll"
+        },
+        "F": {
+            "item": "minecraft:feather"
+        },
+        "I": {
+            "item": "minecraft:dye",
+            "data": 0
+        }
+    },
+    "result": {
+        "item": "ancientspellcraft:battlemage_contract"
+    }
+}

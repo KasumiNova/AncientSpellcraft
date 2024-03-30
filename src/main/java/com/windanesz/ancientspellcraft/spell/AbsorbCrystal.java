@@ -41,11 +41,6 @@ public class AbsorbCrystal extends Spell implements IClassSpell {
 	}
 
 	@Override
-	protected SoundEvent[] createSounds() {
-		return createContinuousSpellSounds();
-	}
-
-	@Override
 	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers) {
 		Optional<Element> elementOptional = WizardArmourUtils.getFullSetElementForClassOptional(caster, ItemWizardArmour.ArmourClass.WARLOCK);
 		ItemStack crystal = caster.getHeldItemOffhand();
@@ -53,6 +48,9 @@ public class AbsorbCrystal extends Spell implements IClassSpell {
 		if ((!(crystal.getItem() instanceof ItemCrystal) || (isBlock && !ItemArtefact.isArtefactActive(caster, ASItems.ring_absorb_crystal))) || crystal.getItemDamage() == 0) {
 			ASUtils.sendMessage(caster, "You must hold an elemental crystal in your offhand", true);
 			return false;
+		}
+		if (ticksInUse % 40 == 0) {
+			this.playSound(world, caster, ticksInUse, -1, modifiers);
 		}
 		if (elementOptional.isPresent()) {
 			Element element = elementOptional.get();
@@ -96,16 +94,6 @@ public class AbsorbCrystal extends Spell implements IClassSpell {
 			}
 		}
 		return false;
-	}
-
-	@Override
-	protected void playSound(World world, EntityLivingBase entity, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds) {
-		this.playSoundLoop(world, entity, ticksInUse);
-	}
-
-	@Override
-	protected void playSound(World world, double x, double y, double z, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds) {
-		this.playSoundLoop(world, x, y, z, ticksInUse, duration);
 	}
 
 	@Override

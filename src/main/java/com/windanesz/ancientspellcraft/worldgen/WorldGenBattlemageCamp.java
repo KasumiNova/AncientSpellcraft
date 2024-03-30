@@ -76,7 +76,7 @@ public class WorldGenBattlemageCamp extends WorldGenSurfaceStructureAS {
 
 	@Override
 	public ResourceLocation getStructureFile(Random random) {
-		return AncientSpellcraft.settings.battlemageCampWithChestFiles[0];
+		return AncientSpellcraft.settings.battlemageCampFiles[random.nextInt(AncientSpellcraft.settings.battlemageCampFiles.length)];
 		//		return new ResourceLocation(AncientSpellcraft.MODID, "battlemage_camp_chest_0");
 	}
 

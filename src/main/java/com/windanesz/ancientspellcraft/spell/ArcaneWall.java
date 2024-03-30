@@ -11,6 +11,7 @@ import electroblob.wizardry.spell.SpellRay;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.SpellModifiers;
+import hunternif.mc.atlas.core.Tile;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,7 +36,8 @@ public class ArcaneWall extends SpellRay implements IClassSpell {
 	@Override
 	protected boolean onBlockHit(World world, BlockPos pos, EnumFacing side, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers) {
 
-		if (caster != null && caster.isSneaking() && world.getBlockState(pos).getBlock() == ASBlocks.arcane_wall) {
+		if (caster != null && caster.isSneaking() && world.getBlockState(pos).getBlock() == ASBlocks.arcane_wall && world.getTileEntity(pos) instanceof TileArcaneWall
+		&& !((TileArcaneWall) world.getTileEntity(pos)).isGenerated()) {
 
 			if (!world.isRemote) {
 				// Dispelling of blocks
@@ -92,7 +94,7 @@ public class ArcaneWall extends SpellRay implements IClassSpell {
 	}
 
 	@Override
-	public ItemWizardArmour.ArmourClass getArmourClass() { return ItemWizardArmour.ArmourClass.SAGE; }
+	public ItemWizardArmour.ArmourClass getArmourClass() {return ItemWizardArmour.ArmourClass.SAGE;}
 
 	@Override
 	public boolean applicableForItem(Item item) {

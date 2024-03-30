@@ -192,6 +192,8 @@
         "chaos_orb": "ranged_attack",
         "chaos_blast": "ranged_attack",
         "animate_item": "ranged_attack",
-        "chaos_vortex": "disengage"
+        "chaos_touch": "ranged_attack",
+        "chaos_vortex": "disengage",
+        "confusion": "ranged_attack"
     }
 }

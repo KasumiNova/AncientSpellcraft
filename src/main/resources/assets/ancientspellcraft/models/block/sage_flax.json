@@ -1,0 +1,6 @@
+{
+    "parent": "block/cross",
+    "textures": {
+        "cross": "ancientspellcraft:blocks/sage_flax"
+    }
+}

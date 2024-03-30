@@ -53,7 +53,7 @@ public class WizardClassWeaponHelper {
 			case WIZARD:
 				return ItemWand.getWand(tier, Element.MAGIC);
 
-			case BATTLEMAGE:
+			case BATTLEMAGE: {
 				if (tier == Tier.NOVICE) {
 					return ASItems.battlemage_sword_novice;
 				} else if (tier == Tier.APPRENTICE) {
@@ -62,16 +62,18 @@ public class WizardClassWeaponHelper {
 					return ASItems.battlemage_sword_advanced;
 				}
 				return ASItems.battlemage_sword_master;
-
-			case SAGE:
-				String registryName = "sage_tome_" +  (tier == Tier.NOVICE && element == Element.MAGIC ? "magic" : tier.getUnlocalisedName());
-				if(element != Element.MAGIC) registryName = registryName + "_" + element.getName();
-				return Item.REGISTRY.getObject(new ResourceLocation(AncientSpellcraft.MODID,  registryName));
+			}
+			case SAGE: {
+				String registryName = "sage_tome_" + tier.getUnlocalisedName() + "_" + element.getName().toLowerCase();
+				return Item.REGISTRY.getObject(new ResourceLocation(AncientSpellcraft.MODID, registryName));
+			}
 
 			// well, we don't have these yet..
 			case WARLOCK:
-			default:
-				return Items.STICK;
+			default: {
+				String registryName = "warlock_orb_" + tier.getUnlocalisedName() + "_" + element.getName().toLowerCase();
+				return Item.REGISTRY.getObject(new ResourceLocation(AncientSpellcraft.MODID, registryName));
+			}
 		}
 	}
 

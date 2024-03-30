@@ -1,5 +1,6 @@
 package com.windanesz.ancientspellcraft.client.gui;
 
+import com.windanesz.ancientspellcraft.item.IItemWithSlots;
 import com.windanesz.ancientspellcraft.item.ItemGlyphArtefact;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -16,30 +17,15 @@ public class ContainerInventoryInItemStack extends Container {
 
 		if (itemInventory instanceof InventoryInItemStack) {
 
-			int rowCount = ((InventoryInItemStack) itemInventory).getRowCount();
-			int columnCount = ((InventoryInItemStack) itemInventory).getColumnCount();
-			int index = 0;
-
-			int offsetX = itemInventory.getSizeInventory() == 9 ? 0 : -54;
-
-			this.addSlotToContainer(new Slot(itemInventory, index, 80, 36) {
+			this.addSlotToContainer(new Slot(itemInventory, 0, 80, 36) {
 				@Override
 				public boolean isItemValid(ItemStack stack) {
-					return stack.getItem() instanceof ItemGlyphArtefact;
+					return ((IItemWithSlots) ((InventoryInItemStack) itemInventory).getStack().getItem()).isItemValid(stack.getItem());
 				}
-			});
-			index++;
-			this.addSlotToContainer(new Slot(itemInventory, index, 60, 76) {
+
 				@Override
-				public boolean isItemValid(ItemStack stack) {
-					return stack.getItem() instanceof ItemGlyphArtefact;
-				}
-			});
-			index++;
-			this.addSlotToContainer(new Slot(itemInventory, index, 100, 76) {
-				@Override
-				public boolean isItemValid(ItemStack stack) {
-					return stack.getItem() instanceof ItemGlyphArtefact;
+				public int getSlotStackLimit() {
+					return 1;
 				}
 			});
 

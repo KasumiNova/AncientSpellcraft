@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.block.BlockSealedStone;
 import com.windanesz.ancientspellcraft.entity.projectile.EntityStoneGuardianShard;
+import com.windanesz.ancientspellcraft.registry.ASBlocks;
 import com.windanesz.ancientspellcraft.registry.ASSounds;
 import electroblob.wizardry.util.ParticleBuilder;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -38,6 +39,7 @@ import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class EntityStoneGuardian extends EntityCreature {
 
@@ -45,6 +47,12 @@ public class EntityStoneGuardian extends EntityCreature {
 	 * The resource location for the evil wizard's loot table.
 	 */
 	private static final ResourceLocation LOOT_TABLE = new ResourceLocation(AncientSpellcraft.MODID, "entities/stone_guardian");
+
+	public void setSeal(Optional<BlockPos> seal) {
+		this.seal = seal;
+	}
+
+	Optional<BlockPos> seal = Optional.empty();
 
 	public boolean isDropLoot() {
 		return dropLoot;
@@ -68,8 +76,7 @@ public class EntityStoneGuardian extends EntityCreature {
 	}
 
 	protected void initEntityAI() {
-		System.out.println("hel");
-		this.tasks.addTask(2, new EntityAIAttackMelee(this, 0.9D, true));
+		this.tasks.addTask(2, new EntityAIAttackMelee(this, 0.8D, true));
 		this.tasks.addTask(2, new EntityAIMoveTowardsTarget(this, 0.8D, 10.0F));
 		this.tasks.addTask(7, new EntityAIMoveToBlock(this, 0.8D, 16) {
 			@Override
@@ -117,7 +124,7 @@ public class EntityStoneGuardian extends EntityCreature {
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
 		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(15.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.23000000417232513D);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.33000000417232513D);
 		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(8.0D);
 		this.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(20.0D);
 		this.getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.8D);
@@ -189,9 +196,9 @@ public class EntityStoneGuardian extends EntityCreature {
 			this.idleTime += 2;
 		}
 
-		if (this.ticksExisted % 30 == 0 && this.getHealth() < this.getMaxHealth()) {
+		if (this.seal.isPresent() && world.getBlockState(seal.get()).getBlock() == ASBlocks.unseal_button && this.ticksExisted % 20 == 0 && this.getHealth() < this.getMaxHealth()) {
 			if (this.world.getBlockState(this.getPosition().down()).getBlock() instanceof BlockSealedStone) {
-				if (!this.world.isRemote) {this.heal(0.5f);} else {
+				if (!this.world.isRemote) {this.heal(3f);} else {
 					// horizontal particle on the floor, always visible
 					ParticleBuilder.create(ParticleBuilder.Type.FLASH)
 							.pos(this.posX, this.posY + 0.101, this.posZ)

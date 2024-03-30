@@ -35,11 +35,38 @@ public class Settings {
 	public List<ResourceLocation> shardFireBiomeWhitelist = Arrays.asList(toResourceLocations(generalSettings.fire_shard_biome_whitelist));
 	public List<ResourceLocation> shardIceBiomeWhitelist = Arrays.asList(toResourceLocations(generalSettings.ice_shard_biome_whitelist));
 
-	public ResourceLocation[] battlemageCampWithChestFiles = {new ResourceLocation(AncientSpellcraft.MODID, "battlemage_camp_chest_0")};
-	public ResourceLocation[] battlemageKeepWithChestFiles = {new ResourceLocation(AncientSpellcraft.MODID, "battlemage_keep_chest_0")};
-	public ResourceLocation[] sageHillWithChestFiles = {new ResourceLocation(AncientSpellcraft.MODID, "sage_hill_chest_0")};
-	public ResourceLocation[] ancientVaultFiles = {new ResourceLocation(AncientSpellcraft.MODID, "ancient_vault_1")};
+	public ResourceLocation[] battlemageCampFiles = {
+			new ResourceLocation(AncientSpellcraft.MODID, "battlemage_camp_chest_0"),
+			new ResourceLocation(AncientSpellcraft.MODID, "battlemage_camp_0")
+	};
+	public ResourceLocation[] battlemageKeepFiles = {
+			new ResourceLocation(AncientSpellcraft.MODID, "battlemage_keep_chest_0"),
+			new ResourceLocation(AncientSpellcraft.MODID, "battlemage_keep_chest_1"),
+			new ResourceLocation(AncientSpellcraft.MODID, "battlemage_keep_0"),
+			new ResourceLocation(AncientSpellcraft.MODID, "battlemage_keep_1")};
+
+	public ResourceLocation[] sageHillWithChestFiles = {
+			new ResourceLocation(AncientSpellcraft.MODID, "sage_hill_chest_0"),
+			new ResourceLocation(AncientSpellcraft.MODID, "sage_hill_chest_1"),
+			new ResourceLocation(AncientSpellcraft.MODID, "sage_hill_chest_2"),
+			new ResourceLocation(AncientSpellcraft.MODID, "sage_hill_chest_3"),
+			new ResourceLocation(AncientSpellcraft.MODID, "sage_hill_chest_4"),
+			new ResourceLocation(AncientSpellcraft.MODID, "sage_hill_chest_5"),
+			new ResourceLocation(AncientSpellcraft.MODID, "sage_hill_chest_6"),
+			new ResourceLocation(AncientSpellcraft.MODID, "sage_hill_chest_7"),
+			new ResourceLocation(AncientSpellcraft.MODID, "sage_hill_0"),
+			new ResourceLocation(AncientSpellcraft.MODID, "sage_hill_0"),
+			new ResourceLocation(AncientSpellcraft.MODID, "sage_hill_0"),
+			new ResourceLocation(AncientSpellcraft.MODID, "sage_hill_0"),
+			new ResourceLocation(AncientSpellcraft.MODID, "sage_hill_0"),
+			new ResourceLocation(AncientSpellcraft.MODID, "sage_hill_0"),
+			new ResourceLocation(AncientSpellcraft.MODID, "sage_hill_0"),
+			new ResourceLocation(AncientSpellcraft.MODID, "sage_hill_0")
+	};
+	public ResourceLocation[] ancientVaultFiles = {new ResourceLocation(AncientSpellcraft.MODID, "ancient_vault_0"), new ResourceLocation(AncientSpellcraft.MODID, "ancient_vault_1")};
+	public ResourceLocation[] fallenTowerFiles = {new ResourceLocation(AncientSpellcraft.MODID, "fallen_tower_0")};
 	public ResourceLocation[] ancientTempleFiles = {new ResourceLocation(AncientSpellcraft.MODID, "ancient_temple_0")};
+	public ResourceLocation[] bookVaultFiles = {new ResourceLocation(AncientSpellcraft.MODID, "bookvault_0")};
 
 	/**
 	 * Helper method to figure out if an item was disabled in the ebwiz configs, as unfortunately itemArtefact#enabled private and has no getter method
@@ -436,6 +463,22 @@ public class Settings {
 				"ancientspellcraft:resist_fire",
 		};
 
+		@Config.Name("Alter Potion Spell Mapping")
+		@Config.Comment("Alter Potion Spell Mapping, entries should be separated by | ")
+		@Config.RequiresMcRestart
+		public String[] alter_potion_mapping = {
+				"minecraft:speed|minecraft:slowness",
+				"minecraft:regeneration|minecraft:poison",
+				"minecraft:strength|minecraft:weakness",
+				"minecraft:haste|minecraft:mining_fatigue",
+				"minecraft:instant_health|minecraft:instant_damage",
+				"minecraft:luck|minecraft:unluck",
+				"minecraft:invisibility|minecraft:glowing",
+				"minecraft:jump_boost|minecraft:levitation",
+				"minecraft:night_vision|minecraft:blindness",
+				"ebwizardry:empowerment|ancientspellcraft:magical_exhaustion",
+		};
+
 		@Config.Name("Duplication Scroll Additonal Items")
 		@Config.Comment("List of registry names (in a 'modid:itemname' format) of additional items that can be duplicated by the Scroll of Duplication")
 		@Config.RequiresMcRestart
@@ -491,6 +534,12 @@ public class Settings {
 		@Config.RangeDouble(min = 0, max = 10)
 		public double empowerment_upgrade_potency_gain = 0.05f;
 
+		@Config.Name("Gem of Power Max Absorb Count")
+		@Config.Comment("")
+		@Config.RequiresMcRestart
+		@Config.RangeDouble(min = 1, max = 100)
+		public double gem_of_power_max_absorb_amount = 30;
+
 		@Config.Name("Master Bolt impact deals block damage")
 		@Config.Comment("")
 		public boolean master_bolt_impact_deals_block_damage = false;
@@ -499,6 +548,11 @@ public class Settings {
 		@Config.Comment("[Server-only] The max destination distance in blocks where the Wild Catalyst artefact can redirect Transportation Portals.")
 		@Config.RequiresMcRestart
 		public int wild_catalyst_max_distance = 10000;
+
+		@Config.Name("Vault Key Usage Mana Cost")
+		@Config.RangeInt(min = 100, max = 10000)
+		public int vault_key_usage_mana_cost = 5000;
+
 
 		@Config.Name("Runic Shield Armor Amount")
 		@Config.RequiresMcRestart
@@ -610,11 +664,6 @@ public class Settings {
 		@Config.RequiresMcRestart
 		public int[] battlemageCampDimensions = {0};
 
-		@Config.Name("Battlemage Camp Rarity")
-		@Config.Comment("[Server-only] The rarity of battlemage camps, used by the world generator. Larger numbers are rarer.")
-		@Config.RequiresMcRestart
-		public int battlemageCampRarity = 1800;
-
 		@Config.Name("Battlemage Keep Dimensions")
 		@Config.Comment("[Server-only] List of dimension ids in which to spawn battlemage keeps.")
 		@Config.RequiresMcRestart
@@ -625,25 +674,50 @@ public class Settings {
 		@Config.RequiresMcRestart
 		public int[] ancientVaultDimensions = {0};
 
-		@Config.Name("Battlemage Keep Rarity")
-		@Config.Comment("[Server-only] The rarity of battlemage keeps, used by the world generator. Larger numbers are rarer.")
+		@Config.Name("Warlock Structure Dimensions")
+		@Config.Comment("[Server-only] List of dimension ids in which to spawn Warlock Structure.")
 		@Config.RequiresMcRestart
-		public int battlemageKeepRarity = 2000;
+		public int[] warlockStructureDimensions = {0};
 
 		@Config.Name("Sage hill Dimensions")
 		@Config.Comment("[Server-only] List of dimension ids in which to spawn the sage hill structures.")
 		@Config.RequiresMcRestart
 		public int[] sageHillDimensions = {0};
 
+		@Config.Name("Battlemage Camp Rarity")
+		@Config.Comment("[Server-only] The rarity of battlemage camps, used by the world generator. Larger numbers are rarer.")
+		@Config.RequiresMcRestart
+		public int battlemageCampRarity = 3200;
+
+		@Config.Name("Book Vault Rarity")
+		@Config.Comment("[Server-only] The rarity of battlemage camps, used by the world generator. Larger numbers are rarer.")
+		@Config.RequiresMcRestart
+		public int bookVaultRarity = 3200;
+
+		@Config.Name("Battlemage Keep Rarity")
+		@Config.Comment("[Server-only] The rarity of battlemage keeps, used by the world generator. Larger numbers are rarer.")
+		@Config.RequiresMcRestart
+		public int battlemageKeepRarity = 3000;
+
 		@Config.Name("Sage hill Rarity")
 		@Config.Comment("[Server-only] The rarity of the sage hill structure, used by the world generator. Larger numbers are rarer.")
 		@Config.RequiresMcRestart
-		public int sageHillRarity = 2000;
+		public int sageHillRarity = 3000;
 
 		@Config.Name("Ancient Vault Structure")
 		@Config.Comment("[Server-only] The rarity of the ancient vault and others (e.g. ancient temple) structures, used by the world generator. Larger numbers are rarer.")
 		@Config.RequiresMcRestart
-		public int ancientVaultRarity = 2500;
+		public int ancientVaultRarity = 4000;
+
+		@Config.Name("Fallen Tower Rarity")
+		@Config.Comment("[Server-only] The rarity of the ancient vault and others (e.g. ancient temple) structures, used by the world generator. Larger numbers are rarer.")
+		@Config.RequiresMcRestart
+		public int fallenTowerRarity = 3800;
+
+		@Config.Name("Warlock Structure Rarity")
+		@Config.Comment("[Server-only] The rarity of the warlock structures. Larger numbers are rarer.")
+		@Config.RequiresMcRestart
+		public int warlockStructureRarity = 3600;
 
 		@Config.Name("Elemental Ore Worldgen Size")
 		@Config.RequiresMcRestart

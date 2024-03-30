@@ -4,7 +4,9 @@ import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
 import com.windanesz.ancientspellcraft.Settings;
+import com.windanesz.ancientspellcraft.item.AbstractItemArtefactWithSlots;
 import com.windanesz.ancientspellcraft.item.ITickableArtefact;
+import com.windanesz.ancientspellcraft.registry.ASItems;
 import com.windanesz.ancientspellcraft.spell.AbsorbArtefact;
 import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.item.ItemArtefact;
@@ -125,6 +127,13 @@ public final class ASBaublesIntegration {
 			ItemStack stack = new ItemStack(artefact.get());
 			if (stack.getItem() instanceof ITickableArtefact) {
 				((ITickableArtefact) stack.getItem()).onWornTick(stack, player);
+			}
+		}
+		List<ItemStack> list = ASBaublesIntegration.getEquippedArtefactStacks(player, ItemArtefact.Type.BELT);
+		if (list.size() == 1) {
+			ItemStack belt = list.get(0);
+			if (belt.getItem() == ASItems.belt_hook && belt.hasTagCompound() && AbstractItemArtefactWithSlots.getItemForSlot(belt, 0).getItem() instanceof ITickableArtefact) {
+				((ITickableArtefact) AbstractItemArtefactWithSlots.getItemForSlot(belt, 0).getItem()).onWornTick(AbstractItemArtefactWithSlots.getItemForSlot(belt, 0), player);
 			}
 		}
 	}

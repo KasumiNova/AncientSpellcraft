@@ -3,6 +3,7 @@ package com.windanesz.ancientspellcraft.spell;
 import com.google.common.collect.Sets;
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.registry.ASItems;
+import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.spell.SpellRay;
@@ -43,6 +44,25 @@ public class AbsorbObject extends SpellRay implements IClassSpell {
 		this.soundValues(1, 1, 0.4f);
 	}
 
+	// Finally everything in here is standardised and written in a form that's actually readable - it was long overdue!
+	@Override
+	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+
+		Vec3d look = caster.getLookVec();
+		Vec3d origin = new Vec3d(caster.posX, caster.posY + caster.getEyeHeight() - Y_OFFSET, caster.posZ);
+		if(!this.isContinuous && world.isRemote && !Wizardry.proxy.isFirstPerson(caster)){
+			origin = origin.add(look.scale(1.2));
+		}
+
+		if(!shootSpell(world, origin, look, caster, ticksInUse, modifiers)) return false;
+
+		if(casterSwingsArm(world, caster, hand, ticksInUse, modifiers)) caster.swingArm(hand);
+		if (ticksInUse == 0 || ticksInUse % 80 == 0) {
+			this.playSound(world, caster, ticksInUse, -1, modifiers);
+		}
+		return true;
+	}
+
 	@Override
 	protected boolean onEntityHit(World world, Entity target, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers) {
 		// Fire can damage armour stands, so this includes them
@@ -72,6 +92,10 @@ public class AbsorbObject extends SpellRay implements IClassSpell {
 					hasStack = true;
 				}
 			}
+		}
+
+		if (caster.isSneaking() && hasStack) {
+			return false;
 		}
 		if (!world.isRemote) {
 			if (ticksInUse == 60) {
@@ -213,23 +237,10 @@ public class AbsorbObject extends SpellRay implements IClassSpell {
 			double z = origin.z + d * direction.z + particleJitter * (world.rand.nextDouble() * 2 - 1);
 			spawnParticle(world, x, y, z, velocity.x, velocity.y, velocity.z);
 		}
-		int duration =  15840 - caster.getItemInUseCount();
 		Vec3d endpoint = origin.add(direction.scale(distance));
 		if (caster.isSneaking()) {
-			System.out.println(duration);
 			ParticleBuilder.create(ParticleBuilder.Type.BEAM).clr(0xa30700).time(-1).shaded(true).pos(origin).target(endpoint).spawn(world);
 		}
-	}
-
-	@Override
-	protected void spawnParticle(World world, double x, double y, double z, double vx, double vy, double vz) {
-		//if (world.rand.nextInt(5) == 0) {ParticleBuilder.create(ParticleBuilder.Type.DARK_MAGIC).pos(x, y, z).clr(0.1f, 0, 0).spawn(world);}
-		// This used to multiply the velocity by the distance from the caster
-		for (int i = 0; i < 10; i++) {
-			//	ParticleBuilder.create(ParticleBuilder.Type.SCORCH).scale(1f).pos(x, y, z).vel(-vx, -vy, -vz).time(5 + world.rand.nextInt(6))
-			//			.clr(0.5f, 0, 0).spawn(world);
-		}
-
 	}
 
 	@Override

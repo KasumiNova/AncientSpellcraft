@@ -3,6 +3,7 @@ package com.windanesz.ancientspellcraft.worldgen;
 import com.google.common.collect.ImmutableMap;
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.Settings;
+import com.windanesz.ancientspellcraft.entity.living.EntitySkeletonMage;
 import com.windanesz.ancientspellcraft.entity.living.EntitySkeletonMageMinion;
 import com.windanesz.ancientspellcraft.integration.antiqueatlas.ASAntiqueAtlasIntegration;
 import electroblob.wizardry.Wizardry;
@@ -111,39 +112,6 @@ public class WorldgenAncientVault extends WorldGenSurfaceStructure {
 
 		template.addBlocksToWorld(world, origin, processor, settings, 2 | 16);
 
-		IBlockState origins = world.getBlockState(origin);
-
-//		for (int i = -1; i > -8; i--) {
-//
-//			// add south
-//			for (int j = 0; j < 16; j++) {
-//
-//				//add east
-//				for (int k = 0; k < 16; k++) {
-////					if (settings.getMirror() == Mirror.LEFT_RIGHT) {
-////
-////					}
-////					if (settings.getRotation() == Rotation.CLOCKWISE_90) {
-////						j = j * -1;
-////					}
-////					if (settings.getRotation() == Rotation.COUNTERCLOCKWISE_90) {
-////						k = k * -1;
-////					}
-////					if (settings.getRotation() == Rotation.CLOCKWISE_180) {
-////						j = j * -1;
-////						k = k * -1;
-////					}
-//
-//					BlockPos currPos = new BlockPos(origin.getX() + j, origin.getY() +i, origin.getZ() + k);
-//					if (world.isAirBlock(currPos) || !world.getBlockState(currPos).isTopSolid()) {
-//						world.setBlockState(currPos, biome.fillerBlock);
-//					}
-//				}
-//
-//			}
-//
-//		}
-
 		ASAntiqueAtlasIntegration.markMysteryStructure(world, origin.getX(), origin.getZ());
 
 		// Wizard spawning
@@ -156,9 +124,8 @@ public class WorldgenAncientVault extends WorldGenSurfaceStructure {
 
 			if (entry.getValue().equals(SKELETON_MAGE_DATA_BLOCK_TAG)) {
 
-				EntitySkeletonMageMinion skeleton = new EntitySkeletonMageMinion(world);
+				EntitySkeletonMage skeleton = new EntitySkeletonMage(world);
 				skeleton.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
-				skeleton.setLifetime(-1); // Stops it despawning
 				skeleton.onInitialSpawn(world.getDifficultyForLocation(origin), null);
 				if (element == Element.HEALING) {
 					skeleton.populateSpellList(Element.HEALING, Spells.ray_of_purification);

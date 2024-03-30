@@ -146,16 +146,16 @@ public class AbsorbProjectile extends Spell implements IClassSpell {
 							projs.setTag("List", tagList);
 							data.setVariable(ABSORBED_PROJECTILES, projs);
 
-							if (world.isRemote) {
-								Element element = getElementOrMagicElement(caster);
-								for (int i = 0; i < 10; i++) {
-									ParticleBuilder.create(ParticleBuilder.Type.FLASH).pos(projectile.posX, projectile.posY, projectile.posZ)
-											.scale(2)
-											.clr(WarlockElementalSpellEffects.PARTICLE_COLOURS.get(element)[world.rand.nextInt(2)])
-											.pos(0, 0, 0)
-											.time(40).spawn(world);
-								}
-							}
+//							if (world.isRemote) {
+//								Element element = getElementOrMagicElement(caster);
+//								for (int i = 0; i < 10; i++) {
+//									ParticleBuilder.create(ParticleBuilder.Type.FLASH).pos(projectile.posX, projectile.posY, projectile.posZ)
+//											.scale(2)
+//											.clr(WarlockElementalSpellEffects.PARTICLE_COLOURS.get(element)[world.rand.nextInt(2)])
+//											.pos(0, 0, 0)
+//											.time(40).spawn(world);
+//								}
+//							}
 
 							world.removeEntity(projectile);
 						}

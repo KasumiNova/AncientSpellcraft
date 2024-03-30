@@ -13,6 +13,7 @@ import com.windanesz.ancientspellcraft.entity.projectile.EntityHeart;
 import com.windanesz.ancientspellcraft.spell.*;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
+import com.windanesz.ancientspellcraft.spell.ChaosTouch;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.spell.SpellConstruct;
 import electroblob.wizardry.spell.SpellProjectile;
@@ -253,7 +254,7 @@ public final class ASSpells {
     public static final Spell ternary_storm = placeholder();
     public static final Spell arcane_wall = placeholder();
     public static final Spell tome_warp = placeholder();
-    public static final Spell absorb_armor = placeholder();
+//    public static final Spell absorb_armor = placeholder();
     public static final Spell absorb_artefact = placeholder();
     public static final Spell absorb_crystal = placeholder();
     public static final Spell absorb_object = placeholder();
@@ -263,11 +264,17 @@ public final class ASSpells {
     public static final Spell chaos_storm = placeholder();
     public static final Spell confusion = placeholder();
     public static final Spell orb_space = placeholder();
-    public static final Spell psychic_slash = placeholder();
+    //public static final Spell psychic_slash = placeholder();
     public static final Spell scrying_orb = placeholder();
     public static final Spell chaos_orb = placeholder();
     public static final Spell chaos_blast = placeholder();
     public static final Spell chaos_vortex = placeholder();
+    public static final Spell chaotic_empowerment = placeholder();
+    public static final Spell chaos_field = placeholder();
+    public static final Spell chaos_touch = placeholder();
+    public static final Spell chaotic_rebinding = placeholder();
+    public static final Spell alter_potion = placeholder();
+    //public static final Spell obliteration = placeholder();
 
 	@SuppressWarnings("unchecked")
 	@SubscribeEvent
@@ -581,7 +588,7 @@ public final class ASSpells {
 		registry.register(new TomeWarp());
 		registry.register(new ChaosOrb<>(AncientSpellcraft.MODID, "chaos_orb", EntityChaosOrb::new));
 		registry.register(new AbsorbObject());
-		registry.register(new WarlockSpellPlaceholder("absorb_armor"));
+//		registry.register(new WarlockSpellPlaceholder("absorb_armor"));
 		registry.register(new AbsorbArtefact());
 		registry.register(new AbsorbCrystal());
 		registry.register(new AbsorbPotion());
@@ -592,8 +599,15 @@ public final class ASSpells {
 		//registry.register(new WarlockSpellPlaceholder("chaos_storm"));
 		//registry.register(new WarlockSpellPlaceholder("confusion"));
 		registry.register(new OrbSpace());
+		registry.register(new ChaoticEmpowerment());
+		registry.register(new ChaosField());
+		registry.register(new ChaosTouch());
+		registry.register(new ChaoticRebinding());
+		registry.register(new Confusion());
+		registry.register(new AlterPotion());
+		//registry.register(new Obliteration());
 		///registry.register(new WarlockSpellPlaceholder("psychic_slash"));
-		//registry.register(new WarlockSpellPlaceholder("scrying_orb"));
+		registry.register(new ScryingOrb());
 		// registry.register(new HeatFurnace()); TODO
 		//registry.register(new WarpWeapon()); TODO
 

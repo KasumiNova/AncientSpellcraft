@@ -72,7 +72,7 @@ public class EntitySkeletonMage extends AbstractSkeleton implements ISpellCaster
 	// Data parameter for the skelly's rarity.
 	protected static final DataParameter<Boolean> IS_RARE = EntityDataManager.createKey(EntitySkeletonMage.class, DataSerializers.BOOLEAN);
 
-	private List<Spell> spells = new ArrayList<>(1);
+	protected List<Spell> spells = new ArrayList<>(1);
 	private EntityAIAttackSpellImproved<EntitySkeletonMage> spellcastingAI = new EntityAIAttackSpellImproved<EntitySkeletonMage>(this, AISpeed, 15f, 25, 40);
 
 	/**
@@ -97,7 +97,7 @@ public class EntitySkeletonMage extends AbstractSkeleton implements ISpellCaster
 	public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata) {
 		livingdata = super.onInitialSpawn(difficulty, livingdata);
 		setLeftHanded(false);
-		this.setRare(rand.nextFloat() < 0.3f);
+		this.setRare(rand.nextFloat() < 0.4f);
 		setElement(pickElementForBiome());
 		Element element = this.getElement();
 		populateSpellList(element, null);
@@ -428,6 +428,11 @@ public class EntitySkeletonMage extends AbstractSkeleton implements ISpellCaster
 				return true;
 			}
 		}
+		return false;
+	}
+
+	@Override
+	protected boolean canDespawn() {
 		return false;
 	}
 

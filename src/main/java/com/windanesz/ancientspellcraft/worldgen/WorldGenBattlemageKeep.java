@@ -3,18 +3,24 @@ package com.windanesz.ancientspellcraft.worldgen;
 import com.google.common.collect.ImmutableMap;
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.Settings;
+import com.windanesz.ancientspellcraft.entity.living.EntityClassWizard;
 import com.windanesz.ancientspellcraft.entity.living.EntityEvilClassWizard;
 import com.windanesz.ancientspellcraft.integration.antiqueatlas.ASAntiqueAtlasIntegration;
 import electroblob.wizardry.Wizardry;
-import electroblob.wizardry.entity.living.EntityWizard;
+import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.registry.WizardryAdvancementTriggers;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.worldgen.MossifierTemplateProcessor;
 import electroblob.wizardry.worldgen.MultiTemplateProcessor;
 import electroblob.wizardry.worldgen.WoodTypeTemplateProcessor;
+import net.minecraft.block.BlockBush;
+import net.minecraft.block.BlockLog;
 import net.minecraft.block.BlockPlanks;
+import net.minecraft.block.BlockStairs;
+import net.minecraft.block.BlockStoneSlab;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
@@ -37,6 +43,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import static net.minecraft.block.BlockStoneSlab.VARIANT;
+
 @Mod.EventBusSubscriber
 public class WorldGenBattlemageKeep extends WorldGenSurfaceStructureAS {
 
@@ -45,8 +53,11 @@ public class WorldGenBattlemageKeep extends WorldGenSurfaceStructureAS {
 
 	private static final String WIZARD_DATA_BLOCK_TAG = "wizard";
 	private static final String EVIL_WIZARD_DATA_BLOCK_TAG = "evil_wizard";
+	private static final String HORSE_DATA_BLOCK_TAG = "horse";
 
 	private final Map<BiomeDictionary.Type, IBlockState> specialWallBlocks;
+	private final Map<BiomeDictionary.Type, IBlockState> specialStairBlocks;
+	private final Map<BiomeDictionary.Type, IBlockState> specialSlabBlocks;
 
 	public WorldGenBattlemageKeep() {
 		// These are initialised here because it's a convenient point after the blocks are registered
@@ -55,6 +66,20 @@ public class WorldGenBattlemageKeep extends WorldGenSurfaceStructureAS {
 				BiomeDictionary.Type.MOUNTAIN, Blocks.STONEBRICK.getDefaultState(),
 				BiomeDictionary.Type.NETHER, Blocks.NETHER_BRICK.getDefaultState(),
 				BiomeDictionary.Type.SANDY, Blocks.SANDSTONE.getDefaultState()
+		);
+
+		specialStairBlocks = ImmutableMap.of(
+				BiomeDictionary.Type.MESA, Blocks.SANDSTONE_STAIRS.getDefaultState(),
+				BiomeDictionary.Type.MOUNTAIN, Blocks.STONE_BRICK_STAIRS.getDefaultState(),
+				BiomeDictionary.Type.NETHER, Blocks.NETHER_BRICK_STAIRS.getDefaultState(),
+				BiomeDictionary.Type.SANDY, Blocks.SANDSTONE_STAIRS.getDefaultState()
+		);
+
+		specialSlabBlocks = ImmutableMap.of(
+				BiomeDictionary.Type.MESA, Blocks.STONE_SLAB2.getDefaultState(),
+				BiomeDictionary.Type.MOUNTAIN, Blocks.STONE_SLAB.getDefaultState(),
+				BiomeDictionary.Type.NETHER,Blocks.STONE_SLAB.getDefaultState().withProperty(VARIANT, BlockStoneSlab.EnumType.NETHERBRICK),
+				BiomeDictionary.Type.SANDY, Blocks.STONE_SLAB.getDefaultState().withProperty(VARIANT, BlockStoneSlab.EnumType.SAND)
 		);
 	}
 
@@ -76,9 +101,9 @@ public class WorldGenBattlemageKeep extends WorldGenSurfaceStructureAS {
 
 	@Override
 	public ResourceLocation getStructureFile(Random random) {
-		return AncientSpellcraft.settings.battlemageKeepWithChestFiles[0];
-		//		return new ResourceLocation(AncientSpellcraft.MODID, "battlemage_camp_chest_0");
+		return AncientSpellcraft.settings.battlemageKeepFiles[random.nextInt(AncientSpellcraft.settings.battlemageKeepFiles.length)];
 	}
+
 
 	@Override
 	public void spawnStructure(Random random, World world, BlockPos origin, Template template, PlacementSettings settings, ResourceLocation structureFile) {
@@ -90,6 +115,12 @@ public class WorldGenBattlemageKeep extends WorldGenSurfaceStructureAS {
 
 		final IBlockState wallMaterial = specialWallBlocks.keySet().stream().filter(t -> BiomeDictionary.hasType(biome, t))
 				.findFirst().map(specialWallBlocks::get).orElse(Blocks.COBBLESTONE.getDefaultState());
+
+		final IBlockState stairMaterial = specialStairBlocks.keySet().stream().filter(t -> BiomeDictionary.hasType(biome, t))
+				.findFirst().map(specialStairBlocks::get).orElse(Blocks.STONE_STAIRS.getDefaultState());
+
+		final IBlockState slabMaterial = specialSlabBlocks.keySet().stream().filter(t -> BiomeDictionary.hasType(biome, t))
+				.findFirst().map(specialSlabBlocks::get).orElse(Blocks.STONE_SLAB.getDefaultState());
 
 		final BlockPlanks.EnumType woodType = BlockUtils.getBiomeWoodVariant(biome);
 
@@ -108,6 +139,16 @@ public class WorldGenBattlemageKeep extends WorldGenSurfaceStructureAS {
 				// Wall material
 				(w, p, i) -> i.blockState.getBlock() == Blocks.COBBLESTONE ? new Template.BlockInfo(i.pos,
 						wallMaterial, i.tileentityData) : i,
+				// Wall material
+				(w, p, i) -> i.blockState.getBlock() == Blocks.STONE_STAIRS ? new Template.BlockInfo(i.pos,
+						stairMaterial
+						.withProperty(BlockStairs.FACING, i.blockState.getValue(BlockStairs.FACING))
+						.withProperty(BlockStairs.HALF, i.blockState.getValue(BlockStairs.HALF))
+						.withProperty(BlockStairs.SHAPE, i.blockState.getValue(BlockStairs.SHAPE))
+						, i.tileentityData) : i,
+				// Wall material
+				(w, p, i) -> i.blockState.getBlock() == Blocks.STONE_SLAB ? new Template.BlockInfo(i.pos,
+						slabMaterial, i.tileentityData) : i,
 				// change ground type to biome's cover block
 				(w, p, i) -> i.blockState.getBlock() == Blocks.DIRT ? new Template.BlockInfo(i.pos,
 						biomeCover, i.tileentityData) : i,
@@ -117,44 +158,38 @@ public class WorldGenBattlemageKeep extends WorldGenSurfaceStructureAS {
 				new MossifierTemplateProcessor(mossiness, 0.04f, origin.getY() + 1),
 				// Block recording (the process() method doesn't get called for structure voids)
 				(w, p, i) -> {
-					if (i.blockState.getBlock() != Blocks.AIR) { blocksPlaced.add(p); }
+					if (i.blockState.getBlock() != Blocks.AIR) {blocksPlaced.add(p);}
 					return i;
 				}
 		);
 
 		template.addBlocksToWorld(world, origin, processor, settings, 2 | 16);
 
-		IBlockState origins = world.getBlockState(origin);
+		if (settings.getBoundingBox() != null) {
+			// Define edge blend factor
+			float edgeBlendFactor = 0.3f;
 
-		for (int i = -1; i > -8; i--) {
+			// Iterate through each position in the bounding box
+			for (BlockPos currPos : BlockPos.getAllInBox(
+					settings.getBoundingBox().minX, settings.getBoundingBox().minY - 8, settings.getBoundingBox().minZ,
+					settings.getBoundingBox().maxX, settings.getBoundingBox().minY, settings.getBoundingBox().maxZ)) {
+				// Place top blocks
+				if (currPos.getY() == settings.getBoundingBox().minY  && world.canSnowAt(currPos, true) && world.isAirBlock(currPos)) {
+					world.setBlockState(currPos, Blocks.SNOW_LAYER.getDefaultState(), 2);
+				} else {
+					// Edge blending
+					if (currPos.getY() != settings.getBoundingBox().minY || world.rand.nextFloat() < edgeBlendFactor) {
+						// Check if the position is air or not solid
+						if (world.isAirBlock(currPos) || world.getBlockState(currPos).getBlock() instanceof BlockBush || world.getBlockState(currPos).getBlock() instanceof BlockLog) {
+							// Determine block type based on Y position
+							IBlockState blockState = (currPos.getY() == settings.getBoundingBox().minY) ? biome.topBlock : biome.fillerBlock;
 
-			// add south
-			for (int j = 0; j < 16; j++) {
-
-				//add east
-				for (int k = 0; k < 16; k++) {
-//					if (settings.getMirror() == Mirror.LEFT_RIGHT) {
-//
-//					}
-//					if (settings.getRotation() == Rotation.CLOCKWISE_90) {
-//						j = j * -1;
-//					}
-//					if (settings.getRotation() == Rotation.COUNTERCLOCKWISE_90) {
-//						k = k * -1;
-//					}
-//					if (settings.getRotation() == Rotation.CLOCKWISE_180) {
-//						j = j * -1;
-//						k = k * -1;
-//					}
-
-					BlockPos currPos = new BlockPos(origin.getX() + j, origin.getY() +i, origin.getZ() + k);
-					if (world.isAirBlock(currPos) || !world.getBlockState(currPos).isTopSolid()) {
-						world.setBlockState(currPos, biome.fillerBlock);
+							// Set the block state
+							world.setBlockState(currPos, blockState);
+						}
 					}
 				}
-
 			}
-
 		}
 
 		ASAntiqueAtlasIntegration.markBattlemageKeep(world, origin.getX(), origin.getZ());
@@ -169,9 +204,10 @@ public class WorldGenBattlemageKeep extends WorldGenSurfaceStructureAS {
 
 			if (entry.getValue().equals(WIZARD_DATA_BLOCK_TAG)) {
 
-				EntityWizard wizard = new EntityWizard(world);
+				EntityClassWizard wizard = new EntityClassWizard(world);
 				wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
 				wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
+				wizard.setArmourClass(ItemWizardArmour.ArmourClass.BATTLEMAGE);
 				wizard.setTowerBlocks(blocksPlaced);
 				world.spawnEntity(wizard);
 
@@ -180,8 +216,13 @@ public class WorldGenBattlemageKeep extends WorldGenSurfaceStructureAS {
 				EntityEvilClassWizard wizard = new EntityEvilClassWizard(world);
 				wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
 				wizard.hasStructure = true; // Stops it despawning
+				wizard.setArmourClass(ItemWizardArmour.ArmourClass.BATTLEMAGE);
 				wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
 				world.spawnEntity(wizard);
+			} else if (entry.getValue().equals(HORSE_DATA_BLOCK_TAG)){
+				EntityHorse horse = new EntityHorse(world);
+				horse.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
+				world.spawnEntity(horse);
 			} else {
 				// This probably shouldn't happen...
 				Wizardry.logger.info("Unrecognised data block value {} in structure {}", entry.getValue(), structureFile);
@@ -199,17 +240,22 @@ public class WorldGenBattlemageKeep extends WorldGenSurfaceStructureAS {
 	}
 
 	private static float getBiomeMossiness(Biome biome) {
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DENSE)) { return 0.7f; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.JUNGLE)) { return 0.7f; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.WET)) { return 0.5f; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SWAMP)) { return 0.5f; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.FOREST)) { return 0.3f; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.LUSH)) { return 0.3f; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DRY)) { return 0; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.COLD)) { return 0; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DEAD)) { return 0; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.WASTELAND)) { return 0; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.NETHER)) { return 0; }
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DENSE)) {return 0.7f;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.JUNGLE)) {return 0.7f;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.WET)) {return 0.5f;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SWAMP)) {return 0.5f;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.FOREST)) {return 0.3f;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.LUSH)) {return 0.3f;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DRY)) {return 0;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.COLD)) {return 0;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DEAD)) {return 0;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.WASTELAND)) {return 0;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.NETHER)) {return 0;}
 		return 0.1f; // Everything else (plains, etc.) has a small amount of moss
+	}
+
+	@Override
+	protected void postGenerate(Random random, World world, PlacementSettings settings) {
+
 	}
 }

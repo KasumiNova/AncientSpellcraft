@@ -1,5 +1,6 @@
 package com.windanesz.ancientspellcraft.block;
 
+import com.windanesz.ancientspellcraft.item.ItemUnsealingScroll;
 import com.windanesz.ancientspellcraft.tileentity.TileArcaneWall;
 import com.windanesz.ancientspellcraft.util.ASUtils;
 import electroblob.wizardry.util.AllyDesignationSystem;
@@ -115,7 +116,7 @@ public class BlockArcaneWall extends Block implements ITileEntityProvider, ITemp
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if (playerIn != null) {
+		if (playerIn != null && !(playerIn.getHeldItem(hand).getItem() instanceof ItemUnsealingScroll)) {
 			ASUtils.sendMessage(playerIn, "interact.ancientspellcraft:arcane_barrier", true);
 		}
 		return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);

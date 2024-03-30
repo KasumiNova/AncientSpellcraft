@@ -1,11 +1,15 @@
 package com.windanesz.ancientspellcraft.util;
 
+import com.sun.org.apache.bcel.internal.generic.RETURN;
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.registry.ASPotions;
+import electroblob.wizardry.constants.Constants;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.constants.Tier;
 import electroblob.wizardry.item.IManaStoringItem;
 import electroblob.wizardry.item.ISpellCastingItem;
+import electroblob.wizardry.item.IWorkbenchItem;
+import electroblob.wizardry.item.ItemCrystal;
 import electroblob.wizardry.item.ItemSpellBook;
 import electroblob.wizardry.item.ItemWand;
 import electroblob.wizardry.registry.WizardryItems;
@@ -19,6 +23,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -481,4 +486,86 @@ public final class ASUtils {
 		}
 		return new ItemStack(book, 1, spell.metadata());
 	}
+
+	public static boolean onApplyButtonPressedStandardManaRecharging(EntityPlayer player, Slot centre, Slot crystals, Slot upgrade, Slot[] spellBooks) {
+		boolean changed = false;
+		if (!(centre.getStack().getItem() instanceof IWorkbenchItem) || !(centre.getStack().getItem() instanceof IManaStoringItem)) {
+			return false;
+		}
+		IManaStoringItem iManaStoringItem = (IManaStoringItem) centre.getStack().getItem();
+
+		// Charges the item by appropriate amount
+		if (crystals.getStack() != ItemStack.EMPTY && !iManaStoringItem.isManaFull(centre.getStack())) {
+
+			int chargeDepleted = iManaStoringItem.getManaCapacity(centre.getStack()) - iManaStoringItem.getMana(centre.getStack());
+
+			// Not too pretty but allows addons implementing the IManaStoringItem interface to provide their mana amount for custom crystals,
+			// previously this was defaulted to the regular crystal's amount, allowing players to exploit it if a crystal was worth less mana than that.
+			int manaPerItem = crystals.getStack().getItem() instanceof IManaStoringItem ?
+					((IManaStoringItem) crystals.getStack().getItem()).getMana(crystals.getStack()) :
+					crystals.getStack().getItem() instanceof ItemCrystal ? Constants.MANA_PER_CRYSTAL : Constants.MANA_PER_SHARD;
+
+			if (crystals.getStack().getItem() == WizardryItems.crystal_shard) {manaPerItem = Constants.MANA_PER_SHARD;}
+			if (crystals.getStack().getItem() == WizardryItems.grand_crystal) {manaPerItem = Constants.GRAND_CRYSTAL_MANA;}
+
+			if (crystals.getStack().getCount() * manaPerItem < chargeDepleted) {
+				// If there aren't enough crystals to fully charge the item
+				iManaStoringItem.rechargeMana(centre.getStack(), crystals.getStack().getCount() * manaPerItem);
+				crystals.decrStackSize(crystals.getStack().getCount());
+
+			} else {
+				// If there are excess crystals (or just enough)
+				iManaStoringItem.setMana(centre.getStack(), iManaStoringItem.getManaCapacity(centre.getStack()));
+				crystals.decrStackSize((int) Math.ceil(((double) chargeDepleted) / manaPerItem));
+			}
+
+			changed = true;
+		}
+
+		return changed;
+	}
+
+	public static Optional<Element> getDamageTypeElement(String damageType) {
+		if (damageType.contains("_")) {
+			String type = damageType.substring(0, damageType.indexOf('_'));
+			switch (type) {
+				case "magic": {
+					return Optional.of(Element.MAGIC);
+
+				}
+				case "fire": {
+					return Optional.of(Element.FIRE);
+
+				}
+				case "frost": {
+					return Optional.of(Element.ICE);
+
+				}
+				case "shock": {
+					return Optional.of(Element.LIGHTNING);
+
+				}
+				case "wither": {
+					return Optional.of(Element.NECROMANCY);
+
+				}
+				case "poison": {
+					return Optional.of(Element.EARTH);
+
+				}
+				case "force":
+				case "blast": {
+					return Optional.of(Element.SORCERY);
+
+				}
+				case "radiant": {
+					return Optional.of(Element.HEALING);
+
+				}
+
+			}
+		}
+		return Optional.empty();
+	}
+
 }

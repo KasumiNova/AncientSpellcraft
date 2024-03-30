@@ -1,0 +1,156 @@
+{
+	"pools": [
+		{
+			"name": "artefact",
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "loot_table",
+					"name": "ebwizardry:subsets/rare_artefacts",
+					"weight": 3
+				},
+				{
+					"type": "loot_table",
+					"name": "ebwizardry:subsets/epic_artefacts",
+					"weight": 1
+				}
+			]
+		},
+		{
+			"name": "junk",
+			"rolls": {
+				"min": 1,
+				"max": 2
+			},
+			"entries": [
+				{
+					"type": "item",
+					"name": "minecraft:web",
+					"weight": 5,
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 9
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"name": "minecraft:rotten_flesh",
+					"weight": 5,
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 9
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"name": "ebwizardry:ruined_spell_book",
+					"weight": 5,
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 4
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"name": "minecraft:paper",
+					"weight": 5,
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 12
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "rare_scrolls",
+			"rolls": {
+				"min": 2,
+				"max": 3
+			},
+			"entries": [
+				{
+					"type": "loot_table",
+					"name": "ancientspellcraft:subsets/rare_scrolls",
+					"weight": 1
+				}
+			]
+		},
+		{
+			"name": "other_goodies",
+			"rolls": {
+				"min": 2,
+				"max": 4
+			},
+			"entries": [
+				{
+					"type": "loot_table",
+					"name": "ebwizardry:subsets/arcane_tomes",
+					"weight": 4
+				},
+				{
+					"type": "loot_table",
+					"name": "ebwizardry:subsets/wand_upgrades",
+					"weight": 4
+				},
+				{
+					"type": "item",
+					"name": "ancientspellcraft:stone_tablet_large",
+					"weight": 3
+				},
+				{
+					"type": "item",
+					"name": "ancientspellcraft:stone_tablet_grand",
+					"weight": 2
+				},
+				{
+					"type": "item",
+					"name": "minecraft:diamond",
+					"weight": 2,
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 2,
+								"max": 4
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"name": "minecraft:emerald",
+					"weight": 3,
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 3,
+								"max": 5
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

@@ -4,6 +4,8 @@ import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.entity.ai.EntityAIAttackSpellImproved;
 import com.windanesz.ancientspellcraft.entity.ai.EntityAIBattlemageMelee;
 import com.windanesz.ancientspellcraft.entity.ai.EntityAIBattlemageSpellcasting;
+import com.windanesz.ancientspellcraft.entity.ai.EntityAIBlockWithShield;
+import com.windanesz.ancientspellcraft.entity.ai.IShieldUser;
 import com.windanesz.ancientspellcraft.item.ItemWarlockOrb;
 import com.windanesz.ancientspellcraft.item.WizardClassWeaponHelper;
 import com.windanesz.ancientspellcraft.registry.ASItems;
@@ -30,6 +32,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -42,18 +45,17 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntityEvilClassWizard extends EntityEvilWizard implements ICustomCooldown, IArmourClassWizard {
+public class EntityEvilClassWizard extends EntityEvilWizard implements ICustomCooldown, IArmourClassWizard, IShieldUser {
 
 	/**
 	 * Decremented each tick while greater than 0. When a spell is cast, this is set to that spell's cooldown plus the
 	 * base cooldown.
 	 */
+	private static final DataParameter<Integer> SHIELD_DISABLED_TICK = EntityDataManager.createKey(EntityEvilClassWizard.class, DataSerializers.VARINT);
 
 	private static final ResourceLocation BATTLEMAGE_LOOT_TABLE = new ResourceLocation(AncientSpellcraft.MODID, "entities/evil_battlemage");
 	private static final ResourceLocation SAGE_LOOT_TABLE = new ResourceLocation(AncientSpellcraft.MODID, "entities/evil_sage");
-
-	/** True if this evil wizard was spawned as part of a structure (tower or shrine), false if it spawned naturally. */
-	public ItemWizardArmour.ArmourClass armourClass = ItemWizardArmour.ArmourClass.BATTLEMAGE;
+	private static final ResourceLocation WARLOCK_LOOT_TABLE = new ResourceLocation(AncientSpellcraft.MODID, "entities/evil_warlock");
 
 	protected int cooldown;
 
@@ -69,22 +71,22 @@ public class EntityEvilClassWizard extends EntityEvilWizard implements ICustomCo
 	private final EntityAIBattlemageMelee entityAIBattlemageMelee = new EntityAIBattlemageMelee(this, 0.6D, false);
 	private final EntityAIBattlemageSpellcasting entityAIBattlemageSpellcasting = new EntityAIBattlemageSpellcasting(this, 0.6D, 14.0F, 30, 50);
 
-	public int getCooldown() { return cooldown; }
+	public int getCooldown() {return cooldown;}
 
-	public void setCooldown(int cooldown) { this.cooldown = cooldown; }
-
-	@Override
-	public int incrementCooldown() { return cooldown++; }
+	public void setCooldown(int cooldown) {this.cooldown = cooldown;}
 
 	@Override
-	public int decrementCooldown() { return cooldown--; }
+	public int incrementCooldown() {return cooldown++;}
+
+	@Override
+	public int decrementCooldown() {return cooldown--;}
 
 	public EntityEvilClassWizard(World world) {
 		super(world);
 		// discard the old AI
 		this.tasks.taskEntries.removeIf(t -> t.action instanceof EntityAIAttackSpell);
+		this.tasks.addTask(2, new EntityAIBlockWithShield(this));
 
-		// add the new AI tasks
 		this.tasks.addTask(3, this.spellCastingAIImproved);
 		this.tasks.addTask(3, this.entityAIBattlemageMelee);
 		this.tasks.addTask(3, this.entityAIBattlemageSpellcasting);
@@ -99,6 +101,8 @@ public class EntityEvilClassWizard extends EntityEvilWizard implements ICustomCo
 			loot = BATTLEMAGE_LOOT_TABLE;
 		} else if (getArmourClass() == ItemWizardArmour.ArmourClass.SAGE) {
 			loot = SAGE_LOOT_TABLE;
+		} else if (getArmourClass() == ItemWizardArmour.ArmourClass.WARLOCK) {
+			loot = WARLOCK_LOOT_TABLE;
 		}
 
 		return loot;
@@ -108,6 +112,7 @@ public class EntityEvilClassWizard extends EntityEvilWizard implements ICustomCo
 	protected void entityInit() {
 		super.entityInit();
 		this.dataManager.register(EVIL_WIZARD_ARMOUR_CLASS, 0);
+		this.dataManager.register(SHIELD_DISABLED_TICK, 0);
 	}
 
 	@Override
@@ -115,16 +120,15 @@ public class EntityEvilClassWizard extends EntityEvilWizard implements ICustomCo
 
 		livingdata = super.onInitialSpawn(difficulty, livingdata);
 
-		if (rand.nextInt(10) > 2) {
-			this.setElement(Element.values()[rand.nextInt(Element.values().length - 1) + 1]);
-		} else {
-			this.setElement(Element.MAGIC);
+		if (getElement() == null) {
+			if (rand.nextInt(10) > 2) {
+				this.setElement(Element.values()[rand.nextInt(Element.values().length - 1) + 1]);
+			} else {
+				this.setElement(Element.MAGIC);
+			}
 		}
 
-		// FIXME: ugly hack which will break when we'll add more types!
-		if (hasStructure) {
-			this.setArmourClass(this.armourClass);
-		} else {
+		if (getArmourClass() == ItemWizardArmour.ArmourClass.WIZARD) {
 			this.setArmourClass(ItemWizardArmour.ArmourClass.values()[world.rand.nextInt(3) + 1]);
 		}
 
@@ -136,7 +140,7 @@ public class EntityEvilClassWizard extends EntityEvilWizard implements ICustomCo
 		}
 
 		// Default chance is 0.085f, for reference.
-		for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) { this.setDropChance(slot, 0.0f); }
+		for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {this.setDropChance(slot, 0.0f);}
 
 		// All wizards know magic missile, even if it is disabled.
 
@@ -150,8 +154,7 @@ public class EntityEvilClassWizard extends EntityEvilWizard implements ICustomCo
 				spellCount = 4;
 		}
 
-		Tier maxTier = IArmourClassWizard.populateSpells(this, spells, element, this.getArmourClass() == ItemWizardArmour.ArmourClass.SAGE
-				|| this.getArmourClass() == ItemWizardArmour.ArmourClass.WARLOCK, spellCount, rand);
+		Tier maxTier = IArmourClassWizard.populateSpells(this, spells, element, this.getArmourClass() == ItemWizardArmour.ArmourClass.SAGE || this.getArmourClass() == ItemWizardArmour.ArmourClass.WARLOCK, spellCount, rand);
 
 		if (this.getArmourClass() == ItemWizardArmour.ArmourClass.WARLOCK) {
 			spells.remove(Spells.magic_missile);
@@ -178,11 +181,12 @@ public class EntityEvilClassWizard extends EntityEvilWizard implements ICustomCo
 			sword.setTagCompound(nbt);
 
 			this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, sword);
-			this.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, wand);
+			this.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, new ItemStack(ASItems.battlemage_shield));
 			setAITask(ItemWizardArmour.ArmourClass.BATTLEMAGE);
+
 		} else {
 			if (getArmourClass() == ItemWizardArmour.ArmourClass.WARLOCK) {
-				wand = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(AncientSpellcraft.MODID, "warlock_orb_" + Tier.values()[rand.nextInt(4)].toString().toLowerCase()+ "_" + element.name().toLowerCase())));
+				wand = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(AncientSpellcraft.MODID, "warlock_orb_" + Tier.values()[rand.nextInt(4)].toString().toLowerCase() + "_" + element.name().toLowerCase())));
 				NBTTagCompound nbt = wand.getTagCompound();
 				if (nbt == null) {
 					nbt = new NBTTagCompound();
@@ -195,7 +199,7 @@ public class EntityEvilClassWizard extends EntityEvilWizard implements ICustomCo
 		}
 
 		// Default chance is 0.085f, for reference.
-		for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) { this.setDropChance(slot, 0.0f); }
+		for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {this.setDropChance(slot, 0.0f);}
 
 		return livingdata;
 	}
@@ -219,7 +223,7 @@ public class EntityEvilClassWizard extends EntityEvilWizard implements ICustomCo
 	}
 
 	@Override
-	public List<Spell> getSpells() { return spells; }
+	public List<Spell> getSpells() {return spells;}
 
 	@Override
 	public ITextComponent getDisplayName() {
@@ -273,8 +277,7 @@ public class EntityEvilClassWizard extends EntityEvilWizard implements ICustomCo
 	public void readEntityFromNBT(NBTTagCompound nbt) {
 
 		super.readEntityFromNBT(nbt);
-		this.spells = (List<Spell>) NBTExtras.NBTToList(nbt.getTagList("spells", Constants.NBT.TAG_INT),
-				(NBTTagInt tag) -> Spell.byMetadata(tag.getInt()));
+		this.spells = (List<Spell>) NBTExtras.NBTToList(nbt.getTagList("spells", Constants.NBT.TAG_INT), (NBTTagInt tag) -> Spell.byMetadata(tag.getInt()));
 		ItemWizardArmour.ArmourClass armourClass = ItemWizardArmour.ArmourClass.values()[nbt.getInteger("armour_class")];
 		this.setArmourClass(armourClass);
 		setAITask(armourClass);
@@ -284,4 +287,61 @@ public class EntityEvilClassWizard extends EntityEvilWizard implements ICustomCo
 			this.tasks.taskEntries.removeIf(t -> t.action instanceof EntityAIWander);
 		}
 	}
+
+	@Override
+	public void onUpdate() {
+		super.onUpdate();
+		if (getShieldDisabledTick() > 0) {
+			decrementShieldDisabledTick();
+		}
+	}
+
+	// vanilla method with a check for shield items to ignore canContinueUsing
+	@Override
+	protected void updateActiveHand() {
+		if (isHandActive()) {
+			ItemStack itemstack = getHeldItem(getActiveHand());
+			if (net.minecraftforge.common.ForgeHooks.canContinueUsing(activeItemStack, itemstack) || itemstack.getItem().isShield(itemstack, this)) {
+				activeItemStack = itemstack;
+			}
+
+			if (itemstack == activeItemStack) {
+				if (!activeItemStack.isEmpty()) {
+					activeItemStackUseCount = net.minecraftforge.event.ForgeEventFactory.onItemUseTick(this, activeItemStack, activeItemStackUseCount);
+					if (activeItemStackUseCount > 0) {activeItemStack.getItem().onUsingTick(activeItemStack, this, activeItemStackUseCount);}
+				}
+
+				if (getItemInUseCount() <= 25 && getItemInUseCount() % 4 == 0) {
+					updateItemUse(activeItemStack, 5);
+				}
+
+				if ((--activeItemStackUseCount <= 0 || 20000 - activeItemStackUseCount > Math.max(25, rand.nextInt(100))) && !world.isRemote) {
+					onItemUseFinish();
+				}
+			} else {
+				resetActiveHand();
+			}
+		}
+	}
+
+	private ItemStack getShieldStack() {
+		return getHeldItem(EnumHand.OFF_HAND);
+	}
+
+	public void setShieldStack(ItemStack stack) {
+		setHeldItem(EnumHand.OFF_HAND, stack);
+	}
+
+	public void setShieldDisabledTick(int count) {
+		dataManager.set(SHIELD_DISABLED_TICK, count);
+	}
+
+	public int getShieldDisabledTick() {
+		return dataManager.get(SHIELD_DISABLED_TICK);
+	}
+
+	public void decrementShieldDisabledTick() {
+		dataManager.set(SHIELD_DISABLED_TICK, (dataManager.get(SHIELD_DISABLED_TICK)) - 1);
+	}
+
 }

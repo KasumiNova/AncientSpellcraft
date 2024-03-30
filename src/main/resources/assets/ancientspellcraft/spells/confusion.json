@@ -1,4 +1,4 @@
-﻿{
+{
     "enabled": {
         "book": true,
         "scroll": true,
@@ -10,13 +10,13 @@
         "trades": true,
         "looting": true
     },
-    "tier": "novice",
+    "tier": "apprentice",
     "element": "magic",
-    "type": "attack",
-    "cost": 10,
-    "chargeup": 0,
-    "cooldown": 20,
+    "type": "alteration",
+    "cost": 100,
+    "chargeup": 20,
+    "cooldown": 100,
     "base_properties": {
-        "range": 5
+        "range": 8
     }
 }

@@ -4,22 +4,37 @@ import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.block.BlockSageLectern;
 import com.windanesz.ancientspellcraft.client.gui.ContainerSageLectern;
 import com.windanesz.ancientspellcraft.item.ItemSageTome;
+import com.windanesz.ancientspellcraft.item.ItemTransmutationScroll;
 import com.windanesz.ancientspellcraft.item.WizardClassWeaponHelper;
 import com.windanesz.ancientspellcraft.registry.ASItems;
+import com.windanesz.ancientspellcraft.spell.IClassSpell;
 import com.windanesz.ancientspellcraft.spell.SpellLecternInteract;
 import com.windanesz.ancientspellcraft.util.WizardArmourUtils;
+import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.block.BlockReceptacle;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.constants.Tier;
+import electroblob.wizardry.data.WizardData;
+import electroblob.wizardry.item.ItemArtefact;
+import electroblob.wizardry.item.ItemScroll;
+import electroblob.wizardry.item.ItemSpellBook;
 import electroblob.wizardry.item.ItemWizardArmour;
+import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.Spell;
+import electroblob.wizardry.tileentity.TileEntityBookshelf;
 import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.ParticleBuilder;
+import electroblob.wizardry.util.SpellProperties;
 import electroblob.wizardry.util.WandHelper;
 import net.minecraft.block.BlockHorizontal;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ItemStackHelper;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -33,15 +48,22 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * Controls the book animations and remembers the GUI state when not in use.
  */
 public class TileSageLectern extends TileEntity implements ITickable, IInventory {
+
+	private static final String NATURAL_NBT_KEY = "NaturallyGenerated";
+
 	public static final double BOOK_OPEN_DISTANCE = 1;
 	public static final int BOOK_SLOT = 0;
 	private static final Random rand = new Random();
@@ -55,6 +77,16 @@ public class TileSageLectern extends TileEntity implements ITickable, IInventory
 	private NonNullList<ItemStack> inventory;
 	private boolean inUse = false;
 	private EntityPlayer currentPlayer;
+
+	public void setNatural(boolean natural) {
+		this.natural = natural;
+	}
+
+	public boolean isNatural() {
+		return natural;
+	}
+
+	private boolean natural = false;
 	private List<SpellLecternInteract> spellEffects = new ArrayList<>();
 
 	public TileSageLectern() {
@@ -121,7 +153,7 @@ public class TileSageLectern extends TileEntity implements ITickable, IInventory
 
 			if (this.bookSpread < 0.5f || rand.nextInt(40) == 0) {
 				float f1 = this.flipT;
-				while (f1 == flipT) { this.flipT += (float) (rand.nextInt(4) - rand.nextInt(4)); }
+				while (f1 == flipT) {this.flipT += (float) (rand.nextInt(4) - rand.nextInt(4));}
 			}
 
 			if (world.isRemote) {
@@ -157,9 +189,9 @@ public class TileSageLectern extends TileEntity implements ITickable, IInventory
 	/**
 	 * Returns true if the lectern has an item (a book)
 	 */
-	public boolean hasItem() { return !getStackInSlot(BOOK_SLOT).isEmpty(); }
+	public boolean hasItem() {return !getStackInSlot(BOOK_SLOT).isEmpty();}
 
-	public ItemStack getBookSlotItem() { return getStackInSlot(BOOK_SLOT) == null ? ItemStack.EMPTY : getStackInSlot(BOOK_SLOT); }
+	public ItemStack getBookSlotItem() {return getStackInSlot(BOOK_SLOT) == null ? ItemStack.EMPTY : getStackInSlot(BOOK_SLOT);}
 
 	public Element getBookElement() {
 		if (getBookSlotItem().getItem() instanceof ItemSageTome) {
@@ -216,8 +248,7 @@ public class TileSageLectern extends TileEntity implements ITickable, IInventory
 			//				Tier tier = Tier.values()[tierLevel];
 			//
 			//			}
-//			if (true) { throw new IllegalArgumentException("Incomplete feature.."); }
-
+			//			if (true) { throw new IllegalArgumentException("Incomplete feature.."); }
 
 		}
 
@@ -248,13 +279,13 @@ public class TileSageLectern extends TileEntity implements ITickable, IInventory
 	@Override
 	public boolean isEmpty() {
 		for (int i = 0; i < getSizeInventory(); i++) {
-			if (!getStackInSlot(i).isEmpty()) { return false; }
+			if (!getStackInSlot(i).isEmpty()) {return false;}
 		}
 		return true;
 	}
 
 	public boolean shouldBookOpen(EntityPlayer player) {
-		if (!this.hasItem()) { return true; }
+		if (!this.hasItem()) {return true;}
 
 		if (this.getBookSlotItem().getItem() instanceof ItemSageTome) {
 			return WizardArmourUtils.isWearingFullSet(player, null, ItemWizardArmour.ArmourClass.SAGE);
@@ -272,7 +303,7 @@ public class TileSageLectern extends TileEntity implements ITickable, IInventory
 		}
 		if (slot == 2 && !itemstack.isEmpty()) {
 			ItemStack stack0 = this.inventory.get(0).copy();
-			int requiredPages = ((ItemSageTome)stack0.getItem()).tier.next().ordinal() * 5;
+			int requiredPages = ((ItemSageTome) stack0.getItem()).tier.next().ordinal() * 5;
 			stack0.shrink(1);
 			ItemStack stack1 = this.inventory.get(1).copy();
 
@@ -355,7 +386,7 @@ public class TileSageLectern extends TileEntity implements ITickable, IInventory
 
 	@Override
 	public boolean isItemValidForSlot(int slotNumber, ItemStack stack) {
-		if (stack == ItemStack.EMPTY) { return true; }
+		if (stack == ItemStack.EMPTY) {return true;}
 
 		if (slotNumber == 0 && stack.getItem() instanceof ItemSageTome && stack.getCount() == 1) {
 			return true;
@@ -407,6 +438,7 @@ public class TileSageLectern extends TileEntity implements ITickable, IInventory
 
 		NBTExtras.storeTagSafely(compound, "SpellEffects", NBTExtras.listToNBT(spellEffects, s -> new NBTTagString(s.getRegistryName().toString())));
 		NBTExtras.storeTagSafely(compound, "Inventory", inventoryList);
+		compound.setBoolean(NATURAL_NBT_KEY, natural);
 		return compound;
 	}
 
@@ -427,6 +459,10 @@ public class TileSageLectern extends TileEntity implements ITickable, IInventory
 			this.spellEffects = (List<SpellLecternInteract>) NBTExtras.NBTToList(compound.getTagList("SpellEffects", Constants.NBT.TAG_STRING),
 					(NBTTagString tag) -> (SpellLecternInteract) Spell.get(tag.getString()));
 		}
+
+		if (compound.hasKey(NATURAL_NBT_KEY)) {
+			this.setNatural(compound.getBoolean(NATURAL_NBT_KEY));
+		}
 	}
 
 	@Override
@@ -444,4 +480,68 @@ public class TileSageLectern extends TileEntity implements ITickable, IInventory
 		readFromNBT(pkt.getNbtCompound());
 	}
 
+	public static void markAsNatural(NBTTagCompound nbt) {
+		if (nbt != null && nbt.getString("id").equals(TileEntity.getKey(TileSageLectern.class).toString())) {
+			nbt.setBoolean(NATURAL_NBT_KEY, true);
+		}
+	}
+
+	public ItemStack pickRandomSpell(Random random, EntityPlayer player){
+		Optional<Element> element;
+		ItemWizardArmour.ArmourClass armourClass = WizardArmourUtils.getArmourClass(player);
+		element = WizardArmourUtils.getFullSetElementForClassOptional(player, armourClass);
+		List<Tier> possibleTiers = Arrays.asList(Tier.APPRENTICE, Tier.APPRENTICE, Tier.ADVANCED,  Tier.ADVANCED, Tier.MASTER);
+
+		Optional<Element> finalElement = element;
+		List<Spell> possibleSpells = Spell.getSpells(// Remove excluded tiers/elements immediately (mainly because empty tier checks should account for excluded elements)
+				s -> possibleTiers.contains(s.getTier()) && !(s instanceof IClassSpell) && !s.applicableForItem(ASItems.ancient_spellcraft_scroll)
+						&& (!finalElement.isPresent() || s.getElement() == finalElement.get()));
+
+		possibleSpells.removeIf(s -> !s.isEnabled(SpellProperties.Context.BOOK));
+
+		// Select a tier...
+
+		// Remove all empty tiers
+		possibleTiers.removeIf(t -> possibleSpells.stream().noneMatch(s -> s.getTier() == t)); // Lambdaception!
+
+		if(possibleTiers.isEmpty()) return ItemStack.EMPTY;
+
+		Tier tier = possibleTiers.get(random.nextInt(possibleTiers.size()));
+
+		// Remove all spells that aren't of the selected tier
+		possibleSpells.removeIf(s -> s.getTier() != tier);
+		if(possibleSpells.isEmpty()) return ItemStack.EMPTY;
+
+
+		if(player != null){
+
+			float bias = 0.9f;
+			// Archivist's eyeglass increases undiscovered bias by 0.4 up to a maximum of 0.9
+			if(ItemArtefact.isArtefactActive(player, WizardryItems.charm_spell_discovery))
+				bias = 0.99f;
+
+			// Remove either the undiscovered spells or the discovered ones, depending on the bias
+			WizardData data = WizardData.get(player);
+
+			int discoveredCount = (int)possibleSpells.stream().filter(data::hasSpellBeenDiscovered).count();
+			// If none have been discovered or they've all been discovered, don't bother!
+			if(discoveredCount > 0 && discoveredCount < possibleSpells.size()){
+				// Kinda unintuitive but it's very neat!
+				boolean keepDiscovered = random.nextFloat() > 0.5f + 0.5f * bias;
+				possibleSpells.removeIf(s -> keepDiscovered != data.hasSpellBeenDiscovered(s));
+			}
+		}
+
+		Spell spell = possibleSpells.get(random.nextInt(possibleSpells.size())); // Finally pick a spell
+
+		List<Item> bookTypeList = ForgeRegistries.ITEMS.getValuesCollection().stream().filter(i -> i instanceof ItemSpellBook).collect(Collectors.toList());
+		Item book = Items.AIR;
+		for (int i = 0; i < bookTypeList.size(); i++) {
+			Item currentBook = bookTypeList.get(i);
+			if (spell.applicableForItem(currentBook)) {
+				book = currentBook;
+			}
+		}
+		return new ItemStack(book, 1, spell.metadata());
+	}
 }

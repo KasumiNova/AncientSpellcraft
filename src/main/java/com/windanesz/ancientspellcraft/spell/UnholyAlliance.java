@@ -49,6 +49,7 @@ public class UnholyAlliance extends SpellMinion<EntitySkeletonMageMinion> {
 			locations.add(caster.getPosition().offset(EnumFacing.NORTH, 2).offset(EnumFacing.WEST, 2));
 			locations.add(caster.getPosition().offset(EnumFacing.SOUTH, 2).offset(EnumFacing.WEST, 2));
 
+
 			for (Element element : Element.values()) {
 				//skip MAGIC element
 				if (element == Element.MAGIC)

@@ -42,6 +42,7 @@ public class ASLoot {
 	private static LootTable ANCIENT_VAULT;
 	private static LootTable WAND_UPGRADES;
 	private static LootTable RARE_SCROLLS;
+	private static LootTable TREASURE_CHEST;
 
 	private ASLoot() {}
 
@@ -55,6 +56,7 @@ public class ASLoot {
 		// chest
 		LootTableList.register(new ResourceLocation(AncientSpellcraft.MODID, "chests/dungeon_additions"));
 		LootTableList.register(new ResourceLocation(AncientSpellcraft.MODID, "chests/ancient_vault"));
+		LootTableList.register(new ResourceLocation(AncientSpellcraft.MODID, "chests/treasure_chest"));
 
 		// subsets
 		//LootTableList.register(new ResourceLocation(AncientSpellcraft.MODID, "subsets/uncommon_artefacts"));

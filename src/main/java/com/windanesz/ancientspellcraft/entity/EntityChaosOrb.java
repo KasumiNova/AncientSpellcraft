@@ -71,6 +71,7 @@ public class EntityChaosOrb extends EntityMagicProjectile {
 			if (nearby.isEmpty()) {
 				nearby = EntityUtils.getLivingWithinRadius(10, this.posX, this.posY, this.posZ, world);
 			}
+			nearby.removeIf(e -> e.isDead || e.getHealth() == 0);
 			List<EntityLivingBase> nearbyAllies = nearby.stream().filter(e -> e ==thrower
 					|| AllyDesignationSystem.isAllied(thrower, e)).collect(Collectors.toList());
 			nearby.removeAll(nearbyAllies);

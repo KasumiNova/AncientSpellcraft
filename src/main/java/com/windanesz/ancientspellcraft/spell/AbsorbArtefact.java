@@ -70,14 +70,12 @@ public class AbsorbArtefact extends Spell implements IClassSpell {
 	}
 
 	@Override
-	protected SoundEvent[] createSounds() {
-		return createContinuousSpellSounds();
-	}
-
-	@Override
 	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers) {
 		Element element = getElementOrMagicElement(caster);
 		ItemStack artefact = caster.getHeldItemOffhand();
+		if (ticksInUse % 40 == 0) {
+			this.playSound(world, caster, ticksInUse, -1, modifiers);
+		}
 		if (!(artefact.getItem() instanceof ItemArtefact)) {
 			ASUtils.sendMessage(caster, "You must hold an artefact in your offhand", true);
 			return false;
@@ -126,7 +124,9 @@ public class AbsorbArtefact extends Spell implements IClassSpell {
 		if (ticksInUse == 60) {
 			WizardData data = WizardData.get(caster);
 			if (caster.getHeldItemOffhand().getItem() == ASItems.body_power_gem) {
-				addToPowerGemCount(caster);
+				if (getPowerGemCount(data) <= Settings.generalSettings.gem_of_power_max_absorb_amount) {
+					addToPowerGemCount(caster);
+				}
 			} else {
 				data.setVariable(ARTEFACT, caster.getHeldItemOffhand().getItem().getRegistryName().toString());
 			}
@@ -139,15 +139,6 @@ public class AbsorbArtefact extends Spell implements IClassSpell {
 		return true;
 	}
 
-	@Override
-	protected void playSound(World world, EntityLivingBase entity, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds) {
-		this.playSoundLoop(world, entity, ticksInUse);
-	}
-
-	@Override
-	protected void playSound(World world, double x, double y, double z, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds) {
-		this.playSoundLoop(world, x, y, z, ticksInUse, duration);
-	}
 
 	public static int getPowerGemCount(EntityPlayer player) {
 		WizardData data = WizardData.get(player);

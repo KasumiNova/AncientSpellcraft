@@ -1,5 +1,6 @@
 package com.windanesz.ancientspellcraft.mixin;
 
+import com.windanesz.ancientspellcraft.spell.WarlockElementalSpellEffects;
 import electroblob.wizardry.block.BlockReceptacle;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.item.IManaStoringItem;
@@ -28,6 +29,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
+import java.util.Random;
 
 @Mixin(ItemWand.class)
 public class ItemWandMixin {
@@ -130,12 +132,30 @@ public class ItemWandMixin {
 						double y = origin.y + world.rand.nextDouble() - 0.3 + vec.y * distance * 0.3;
 						double z = origin.z + world.rand.nextDouble() - 0.3 + vec.z * distance * 0.3;
 
-						ParticleBuilder.create(ParticleBuilder.Type.DUST, world.rand,x, y, z, 1, false).scale(world.rand.nextFloat() * 4)
-								.clr(colours[1]).fade(colours[2]).time(10).vel(vec.x * 0.8, vec.y * 0.8,vec.z * 0.8).spawn(world);
-
-						//world.spawnParticle(EnumParticleTypes.CLOUD, x, y, z, vec.x, vec.y, vec.z);
-
+						ParticleBuilder.create(WarlockElementalSpellEffects.getElementalParticle(element), world.rand,x, y, z, 1, false).scale(world.rand.nextFloat() * 2)
+								.clr(colours[0]).time(5).vel(vec.x * 0.8, vec.y * 0.8,vec.z * 0.8).spawn(world);
 					}
+
+					Random random = wielder.world.rand;
+
+					wielder.world.playSound(wielder.posX, wielder.posY, wielder.posZ, WizardrySounds.ITEM_WAND_MELEE, SoundCategory.PLAYERS, 0.75f, 1, false);
+
+					if(wielder.world.isRemote){
+
+						origin = wielder.getPositionEyes(1);
+						Vec3d hit = origin.add(wielder.getLookVec().scale(wielder.getDistance(event.getTarget())));
+						// Generate two perpendicular vectors in the plane perpendicular to the look vec
+						Vec3d vec1 = wielder.getLookVec().rotatePitch(90);
+						Vec3d vec2 = wielder.getLookVec().crossProduct(vec1);
+
+						for(int i = 0; i < 15; i++){
+							ParticleBuilder.create(WarlockElementalSpellEffects.getElementalParticle(element)).pos(hit)
+									.vel(vec1.scale(random.nextFloat() * 0.3f - 0.15f).add(vec2.scale(random.nextFloat() * 0.3f - 0.15f)))
+									.clr(colours[0])
+									.time(8 + random.nextInt(4)).spawn(wielder.world);
+						}
+					}
+
 				}
 			}
 		}

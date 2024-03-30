@@ -37,6 +37,7 @@ public class ASSounds {
 	public static final SoundEvent CONTINGENCY_ACTIVATE = createSound("contingency_activate");
 	public static final SoundEvent BARTERING_SCROLL = createSound("bartering_scroll");
 	public static final SoundEvent TRANSMUTATION = createSound("transmutation");
+	public static final SoundEvent spell_chaos_blast_charge = createSound("spell.chaos_blast_charge");
 
 
 	public static SoundEvent createSound(String name) {

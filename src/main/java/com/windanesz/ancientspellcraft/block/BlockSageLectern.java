@@ -180,6 +180,14 @@ public class BlockSageLectern extends BlockHorizontal implements ITileEntityProv
 
 		if (tileEntity instanceof TileSageLectern) {
 			TileSageLectern lectern = (TileSageLectern) tileEntity;
+
+			if (lectern.isNatural()) {
+				lectern.setNatural(false);
+				lectern.setInventorySlotContents(TileSageLectern.BOOK_SLOT, ItemStack.EMPTY);
+				ASUtils.giveStackToPlayer(player, lectern.pickRandomSpell(player.world.rand, player));
+				return true;
+			}
+
 			boolean lecternHasItem = lectern.hasItem();
 			ItemStack heldStack = player.getHeldItem(hand);
 

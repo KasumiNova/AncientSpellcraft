@@ -2,12 +2,14 @@ package com.windanesz.ancientspellcraft.spell;
 
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.registry.ASItems;
+import com.windanesz.ancientspellcraft.registry.ASSounds;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.entity.ICustomHitbox;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.item.SpellActions;
+import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.SpellRay;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.GeometryUtils;
@@ -70,6 +72,9 @@ public class ChaosBlast extends SpellRay implements IClassSpell {
 	private boolean doSpellTick(World world, EntityLivingBase caster, EnumHand hand, int ticksInUse, @Nullable EntityLivingBase target, SpellModifiers modifiers) {
 		int chargeup = getProperty(CHARGING_TIME).intValue();
 		Element element = getElementOrMagicElement(caster);
+		if (ticksInUse == 0) {
+			world.playSound(null, caster.getPosition(), ASSounds.spell_chaos_blast_charge, WizardrySounds.SPELLS, volume, pitch + pitchVariation * (world.rand.nextFloat() - 0.5f));
+		}
 		if (ticksInUse < chargeup) {
 			if (world.isRemote && caster.ticksExisted % 1 == 0) {
 				for (int i = 0; i < 10; i++) {
@@ -164,7 +169,7 @@ public class ChaosBlast extends SpellRay implements IClassSpell {
 	protected boolean onEntityHit(World world, Entity target, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers, Element element) {
 		if (target instanceof EntityLivingBase) {
 				EntityUtils.attackEntityWithoutKnockback(target, caster == null ? DamageSource.MAGIC :
-								MagicDamage.causeDirectMagicDamage(caster, MagicDamage.DamageType.FIRE),
+								MagicDamage.causeDirectMagicDamage(caster, MagicDamage.DamageType.MAGIC),
 						getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 				WarlockElementalSpellEffects.affectEntity((EntityLivingBase) target, element, caster,  modifiers, true);
 		}

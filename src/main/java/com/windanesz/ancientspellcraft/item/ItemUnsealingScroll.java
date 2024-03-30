@@ -46,7 +46,7 @@ public class ItemUnsealingScroll extends ItemRareScroll {
 				if (tile instanceof TileArcaneWall && ((TileArcaneWall) tile).isGenerated()) {
 					((TileArcaneWall) tile).setBeingDispelled(true);
 					if (!caster.isCreative()) {
-						consumeScroll(caster, stack);
+
 					}
 				}
 			}

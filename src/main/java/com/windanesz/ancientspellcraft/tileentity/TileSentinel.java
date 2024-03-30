@@ -44,7 +44,7 @@ import java.util.UUID;
 @SuppressWarnings("Duplicates")
 public class TileSentinel extends TileEntity implements ITickable {
 
-	private final double maxAttackDistance = 15D;
+	private final double maxAttackDistance = 5D;
 	public float crystalRotation;
 	public float crystalRotationPrev;
 	public float tRot;
@@ -188,12 +188,12 @@ public class TileSentinel extends TileEntity implements ITickable {
 			world.playSound(null, this.pos.getX(), this.pos.getY(), this.pos.getZ(), ASSounds.SENTINEL_AMBIENT, SoundCategory.NEUTRAL, 1.1F, 1F);
 		}
 
-		if (this.ownerUUID == null) {
-			EntityPlayer player = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), 20, false);
-			if (player != null) {
-				this.ownerUUID = player.getUniqueID();
-			}
-		}
+//		if (this.ownerUUID == null) {
+//			EntityPlayer player = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), 20, false);
+//			if (player != null) {
+//				this.ownerUUID = player.getUniqueID();
+//			}
+//		}
 
 		if (spellCaster == null) {
 			initSpellcaster();
@@ -206,17 +206,31 @@ public class TileSentinel extends TileEntity implements ITickable {
 		// saves some work by only looking for enemies when it's able to target them
 		if (ticksUntilNextSpell == 0) {
 
-			List<EntityLivingBase> entities = EntityUtils.getEntitiesWithinRadius(maxAttackDistance, this.pos.getX() + 0.5F, this.pos.getY() + 0.5F, this.pos.getZ() + 0.5F, world, EntityLivingBase.class);
+			List<EntityLivingBase> entities = EntityUtils.getEntitiesWithinRadius(maxAttackDistance,
+					this.pos.getX() + 0.5F,
+					this.pos.getY() + 0.5F,
+					this.pos.getZ() + 0.5F, world, EntityLivingBase.class);
 
 			if (!entities.isEmpty()) {
 
 				for (EntityLivingBase target : entities) {
 
-					if (!(target instanceof EntityArmorStand) && isValidTarget(target) && target.isEntityAlive()) {
+					if (ownerUUID == null && target instanceof EntityPlayer) {
 
 						double distanceSq = target.getDistanceSq(this.pos.getX(), this.pos.getY(), this.pos.getZ());
 
 						if (Math.sqrt(distanceSq) <= maxAttackDistance) { // && isVisibleTarget(target)) {
+							if (tryCastSpell(target)) {
+								resetSpellTimer(10);
+
+								// only attack the first enemy
+								break;
+							}
+						}
+					} else if (ownerUUID != null && !(target instanceof EntityArmorStand) && isValidTarget(target) && target.isEntityAlive()) {
+						double distanceSq = target.getDistanceSq(this.pos.getX(), this.pos.getY(), this.pos.getZ());
+
+						if (Math.sqrt(distanceSq) <= maxAttackDistance) { // ) {
 							if (tryCastSpell(target)) {
 								resetSpellTimer();
 
@@ -291,6 +305,10 @@ public class TileSentinel extends TileEntity implements ITickable {
 
 	private void resetSpellTimer() {
 		ticksUntilNextSpell = (int) (spellCastFrequency * (large ? 0.6 : 1));
+	}
+
+	private void resetSpellTimer(int i) {
+		ticksUntilNextSpell = i;
 	}
 
 	public boolean isValidTarget(Entity target) {

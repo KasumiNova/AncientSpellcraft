@@ -5,6 +5,7 @@ import com.windanesz.ancientspellcraft.potion.PotionAstralProjection;
 import com.windanesz.ancientspellcraft.potion.PotionBubbleHead;
 import com.windanesz.ancientspellcraft.potion.PotionBurrow;
 import com.windanesz.ancientspellcraft.potion.PotionCandleLight;
+import com.windanesz.ancientspellcraft.potion.PotionChaos;
 import com.windanesz.ancientspellcraft.potion.PotionCurseAS;
 import com.windanesz.ancientspellcraft.potion.PotionCurseDeath;
 import com.windanesz.ancientspellcraft.potion.PotionCurseEnder;
@@ -83,6 +84,7 @@ public class ASPotions {
 	public static final Potion arcane_aegis = placeholder();
 	public static final Potion fortified_archery = placeholder();
 	public static final Potion magical_exhaustion = placeholder();
+	public static final Potion chaos = placeholder();
 	public static final Potion bubble_head = placeholder();
 
 	public static final Potion spell_range = placeholder();
@@ -176,6 +178,9 @@ public class ASPotions {
 
 		registerPotion(registry, "magical_exhaustion", new PotionMagicEffectAS("magical_exhaustion", true, 0x635a63,
 				new ResourceLocation(AncientSpellcraft.MODID, "textures/gui/potion_icon_magical_exhaustion.png")));
+
+		registerPotion(registry, "chaos", new PotionChaos("chaos", true, 0xfc0303,
+				new ResourceLocation(AncientSpellcraft.MODID, "textures/gui/potion_icon_chaos.png")));
 
 		registerPotion(registry, "bubble_head", new PotionBubbleHead());
 

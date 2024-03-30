@@ -613,6 +613,39 @@ public class ItemWarlockOrb extends Item implements ISpellCastingItem, IWorkbenc
 				}
 
 			}
+		} else if(upgrade.getItem() == WizardryItems.arcane_tome){
+
+			Tier tier = Tier.values()[upgrade.getItemDamage()];
+
+			// Checks the wand upgrade is for the tier above the wand's tier, and that either the wand has enough
+			// progression or the player is in creative mode.
+			if((player == null || player.isCreative() || Wizardry.settings.legacyWandLevelling
+					|| WandHelper.getProgression(wand) >= tier.getProgression())
+					&& tier == this.tier.next() && this.tier != Tier.MASTER){
+
+				if(Wizardry.settings.legacyWandLevelling){
+					// Progression has little meaning with legacy upgrade mechanics so just reset it
+					// In theory, you can get 'free' progression when upgrading since progression can't be negative,
+					// so the flipside of that is you lose any excess
+					WandHelper.setProgression(wand, 0);
+				}else{
+					// Carry excess progression over to the new stack
+					WandHelper.setProgression(wand, WandHelper.getProgression(wand) - tier.getProgression());
+				}
+
+				if(player != null) WizardData.get(player).setTierReached(tier);
+
+				ItemStack progressedOrb = new ItemStack(WizardClassWeaponHelper.getClassItemForTier(tier, ItemWizardArmour.ArmourClass.WARLOCK, element));
+				progressedOrb.setTagCompound(wand.getTagCompound());
+				// This needs to be done after copying the tag compound so the mana capacity for the new wand
+				// takes storage upgrades into account
+				// Note the usage of the new wand item and not 'this' to ensure the correct capacity is used
+				((IManaStoringItem)progressedOrb.getItem()).setMana(progressedOrb, this.getMana(wand));
+
+				upgrade.shrink(1);
+
+				return progressedOrb;
+			}
 		}
 
 		return wand;
@@ -660,22 +693,6 @@ public class ItemWarlockOrb extends Item implements ISpellCastingItem, IWorkbenc
 		}
 
 		WandHelper.setSpells(centre.getStack(), spells);
-
-		if (!theorySpellData.isEmpty()) {
-			NBTTagCompound tomeTheoryData = new NBTTagCompound();
-
-			if (centre.getStack().hasTagCompound() && centre.getStack().getTagCompound().hasKey(PerfectTheorySpell.PERFECT_THEORY_DATA)) {
-				NBTTagCompound theorySpells = centre.getStack().getTagCompound().getCompoundTag(PerfectTheorySpell.PERFECT_THEORY_DATA);
-				for (String key : theorySpells.getKeySet()) {
-					theorySpellData.put(Integer.parseInt(key), theorySpells.getCompoundTag(key));
-				}
-			}
-
-			for (Map.Entry<Integer, NBTTagCompound> entry : theorySpellData.entrySet()) {
-				if (entry.getValue() != null) { tomeTheoryData.setTag(entry.getKey().toString(), entry.getValue()); }
-			}
-			centre.getStack().getTagCompound().setTag(PerfectTheorySpell.PERFECT_THEORY_DATA, tomeTheoryData);
-		}
 
 		// Charges wand by appropriate amount
 		if (crystals.getStack() != ItemStack.EMPTY && !this.isManaFull(centre.getStack())) {

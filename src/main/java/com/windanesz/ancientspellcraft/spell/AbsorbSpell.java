@@ -58,17 +58,15 @@ public class AbsorbSpell extends Spell implements IClassSpell {
 	}
 
 	@Override
-	protected SoundEvent[] createSounds() {
-		return createContinuousSpellSounds();
-	}
-
-	@Override
 	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers) {
 		Optional<Element> elementOptional = WizardArmourUtils.getFullSetElementForClassOptional(caster, ItemWizardArmour.ArmourClass.WARLOCK);
 		ItemStack book = caster.getHeldItemOffhand();
 		if (!(book.getItem() instanceof ItemSpellBook) || Spell.byMetadata(book.getMetadata()) instanceof IClassSpell) {
 			ASUtils.sendMessage(caster, "You must hold a regular spell book in your offhand", true);
 			return false;
+		}
+		if (ticksInUse % 40 == 0) {
+			this.playSound(world, caster, ticksInUse, -1, modifiers);
 		}
 		Spell spell = Spell.byMetadata(book.getMetadata());
 		String rarity = book.getItem().getForgeRarity(book).getName();
@@ -111,16 +109,6 @@ public class AbsorbSpell extends Spell implements IClassSpell {
 			}
 		}
 		return false;
-	}
-
-	@Override
-	protected void playSound(World world, EntityLivingBase entity, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds) {
-		this.playSoundLoop(world, entity, ticksInUse);
-	}
-
-	@Override
-	protected void playSound(World world, double x, double y, double z, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds) {
-		this.playSoundLoop(world, x, y, z, ticksInUse, duration);
 	}
 
 	public static Optional<Spell> getSpell(WizardData data) {

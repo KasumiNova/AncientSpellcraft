@@ -24,12 +24,15 @@ import com.windanesz.ancientspellcraft.worldgen.WorldGenAncientTemple;
 import com.windanesz.ancientspellcraft.worldgen.WorldGenAstralDiamondOre;
 import com.windanesz.ancientspellcraft.worldgen.WorldGenBattlemageCamp;
 import com.windanesz.ancientspellcraft.worldgen.WorldGenBattlemageKeep;
+import com.windanesz.ancientspellcraft.worldgen.WorldGenBookVault;
 import com.windanesz.ancientspellcraft.worldgen.WorldGenCrystalShardOre;
 import com.windanesz.ancientspellcraft.worldgen.WorldGenCrystalSilverOre;
 import com.windanesz.ancientspellcraft.worldgen.WorldGenDevoritiumOre;
 import com.windanesz.ancientspellcraft.worldgen.WorldGenSageFlax;
 import com.windanesz.ancientspellcraft.worldgen.WorldGenSageHill;
+import com.windanesz.ancientspellcraft.worldgen.WorldGenWarlockStructure;
 import com.windanesz.ancientspellcraft.worldgen.WorldgenAncientVault;
+import com.windanesz.ancientspellcraft.worldgen.WorldgenFallenTower;
 import electroblob.wizardry.event.SpellCastEvent;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -125,8 +128,11 @@ public class AncientSpellcraft {
 		GameRegistry.registerWorldGenerator(new WorldGenBattlemageKeep(), 20);
 		GameRegistry.registerWorldGenerator(new WorldGenSageHill(), 20);
 		GameRegistry.registerWorldGenerator(new WorldgenAncientVault(), 20);
+		GameRegistry.registerWorldGenerator(new WorldGenWarlockStructure(), 20);
 		GameRegistry.registerWorldGenerator(new WorldGenAncientTemple(), 20);
 		GameRegistry.registerWorldGenerator(new WorldGenSageFlax(), 0);
+		GameRegistry.registerWorldGenerator(new WorldgenFallenTower(), 15);
+		GameRegistry.registerWorldGenerator(new WorldGenBookVault(), 15);
 
 		ASItems.registerDispenseBehaviours();
 		MinecraftForge.EVENT_BUS.register(instance); // Since there's already an instance we might as well use it

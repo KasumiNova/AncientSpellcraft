@@ -10,6 +10,7 @@ import electroblob.wizardry.data.IStoredVariable;
 import electroblob.wizardry.data.Persistence;
 import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.event.SpellCastEvent;
+import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.ParticleBuilder;
@@ -52,7 +53,7 @@ public class Contingency extends Spell {
 
 	@SuppressWarnings("Duplicates")
 	public static boolean tryCastContingencySpell(EntityPlayer player, WizardData data, Type contingency) {
-		if (data == null) { return false; }
+		if (data == null || player.getCooldownTracker().hasCooldown(ASItems.ring_eternal_contingency)) { return false; }
 
 		// purging the active contingency listener to avoid weird use cases
 		data.setVariable(ACTIVE_CONTINGENCY_LISTENER, null);
@@ -69,7 +70,11 @@ public class Contingency extends Spell {
 
 		if (SpellcastUtils.tryCastSpellAsPlayer(player, spellToTrigger, EnumHand.MAIN_HAND, SpellCastEvent.Source.WAND, new SpellModifiers(), 120)) {
 			// removing this contingency
-			activeContingencies.removeTag(contingency.spellName);
+			if (player.getCooldownTracker().hasCooldown(ASItems.ring_eternal_contingency) || !ItemArtefact.isArtefactActive(player, ASItems.ring_eternal_contingency)) {
+				activeContingencies.removeTag(contingency.spellName);
+			} else {
+				player.getCooldownTracker().setCooldown(ASItems.ring_eternal_contingency, spellToTrigger.getCooldown() * 10 + (spellToTrigger.getTier().ordinal() + 1) * 500);
+			}
 			data.setVariable(ACTIVE_CONTINGENCIES, activeContingencies);
 			data.sync();
 

@@ -9,6 +9,7 @@ import com.windanesz.ancientspellcraft.entity.construct.EntityAntiMagicField;
 import com.windanesz.ancientspellcraft.entity.construct.EntityArcaneBarrier;
 import com.windanesz.ancientspellcraft.entity.construct.EntityBarterConstruct;
 import com.windanesz.ancientspellcraft.entity.construct.EntityBuilder;
+import com.windanesz.ancientspellcraft.entity.construct.EntityChaosField;
 import com.windanesz.ancientspellcraft.entity.construct.EntityHealingSigil;
 import com.windanesz.ancientspellcraft.entity.construct.EntityMoltenBoulder;
 import com.windanesz.ancientspellcraft.entity.construct.EntitySentinel;
@@ -18,6 +19,7 @@ import com.windanesz.ancientspellcraft.entity.construct.EntitySpiritWard;
 import com.windanesz.ancientspellcraft.entity.construct.EntityTransportationPortal;
 import com.windanesz.ancientspellcraft.entity.construct.EntityVenusFlyTrap;
 import com.windanesz.ancientspellcraft.entity.living.EntityAnimatedItem;
+import com.windanesz.ancientspellcraft.entity.living.EntityClassWizard;
 import com.windanesz.ancientspellcraft.entity.living.EntityCreeperMinion;
 import com.windanesz.ancientspellcraft.entity.living.EntityEvilClassWizard;
 import com.windanesz.ancientspellcraft.entity.living.EntityFireAnt;
@@ -148,6 +150,7 @@ public class ASEntities {
 		registry.register(createEntry(EntityVolcano.class, "entity_volcano", TrackingType.LIVING).build());
 
 		registry.register(createEntry(EntityAntiMagicField.class, "anti_magic_field", TrackingType.CONSTRUCT).build());
+		registry.register(createEntry(EntityChaosField.class, "chaos_field", TrackingType.CONSTRUCT).build());
 		registry.register(createEntry(EntityMetamagicProjectile.class, "contingency_projectile", ASEntities.TrackingType.PROJECTILE).build());
 		registry.register(createEntry(EntityContingencyProjectile.class, "metamagic_projectile", ASEntities.TrackingType.PROJECTILE).build());
 
@@ -179,6 +182,7 @@ public class ASEntities {
 				.spawn(EnumCreatureType.MONSTER, Settings.generalSettings.evil_class_wizard_spawn_rate, 1, 1, ForgeRegistries.BIOMES.getValuesCollection().stream()
 						.filter(b -> !Arrays.asList(Wizardry.settings.mobSpawnBiomeBlacklist).contains(b.getRegistryName()))
 						.collect(Collectors.toSet())).build());
+		registry.register(createEntry(EntityClassWizard.class, 		"class_wizard", AncientSpellcraft.MODID, TrackingType.LIVING).egg(0xffffff, 0xee9312).build());
 
 
 		registry.register(createEntry(EntityBarterConstruct.class, "barter_entity", AncientSpellcraft.MODID, TrackingType.CONSTRUCT).build());

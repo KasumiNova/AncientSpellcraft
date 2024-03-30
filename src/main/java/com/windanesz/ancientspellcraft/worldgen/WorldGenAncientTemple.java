@@ -3,12 +3,11 @@ package com.windanesz.ancientspellcraft.worldgen;
 import com.google.common.collect.ImmutableMap;
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.Settings;
-import com.windanesz.ancientspellcraft.entity.living.EntityEvilClassWizard;
+import com.windanesz.ancientspellcraft.block.BlockSageLectern;
+import com.windanesz.ancientspellcraft.entity.living.EntityStoneGuardian;
 import com.windanesz.ancientspellcraft.integration.antiqueatlas.ASAntiqueAtlasIntegration;
-import electroblob.wizardry.Wizardry;
+import com.windanesz.ancientspellcraft.tileentity.TileSageLectern;
 import electroblob.wizardry.constants.Element;
-import electroblob.wizardry.entity.living.EntityWizard;
-import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.registry.WizardryAdvancementTriggers;
 import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.tileentity.TileEntityBookshelf;
@@ -22,8 +21,11 @@ import net.minecraft.block.BlockStoneBrick;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -40,6 +42,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
@@ -50,19 +53,9 @@ public class WorldGenAncientTemple extends WorldGenSurfaceStructureAS {
 	// This requires some careful manipulation of Random objects to replicate the positions exactly for the current
 	// world. See the end of ChunkGeneratorOverworld for the relevant methods.
 
-	private static final String WIZARD_DATA_BLOCK_TAG = "wizard";
-	private static final String EVIL_WIZARD_DATA_BLOCK_TAG = "evil_wizard";
-
-	private final Map<BiomeDictionary.Type, IBlockState> specialWallBlocks;
+	private static final String STONE_GUARDIAN = "stone_guardian";
 
 	public WorldGenAncientTemple() {
-		// These are initialised here because it's a convenient point after the blocks are registered
-		specialWallBlocks = ImmutableMap.of(
-				BiomeDictionary.Type.MESA, Blocks.RED_SANDSTONE.getDefaultState(),
-				BiomeDictionary.Type.MOUNTAIN, Blocks.STONEBRICK.getDefaultState(),
-				BiomeDictionary.Type.NETHER, Blocks.NETHER_BRICK.getDefaultState(),
-				BiomeDictionary.Type.SANDY, Blocks.SANDSTONE.getDefaultState()
-		);
 	}
 
 	@Override
@@ -72,7 +65,7 @@ public class WorldGenAncientTemple extends WorldGenSurfaceStructureAS {
 
 	@Override
 	public long getRandomSeedModifier() {
-		return 12342335L; // Yep, I literally typed 8 digits at random
+		return 12342215L; // Yep, I literally typed 8 digits at random
 	}
 
 	@Override
@@ -95,9 +88,6 @@ public class WorldGenAncientTemple extends WorldGenSurfaceStructureAS {
 		IBlockState biomeCover = biome.topBlock;
 		final float mossiness = getBiomeMossiness(biome);
 
-		final IBlockState wallMaterial = specialWallBlocks.keySet().stream().filter(t -> BiomeDictionary.hasType(biome, t))
-				.findFirst().map(specialWallBlocks::get).orElse(Blocks.COBBLESTONE.getDefaultState());
-
 		final BlockPlanks.EnumType woodType = BlockUtils.getBiomeWoodVariant(biome);
 
 		final Set<BlockPos> blocksPlaced = new HashSet<>();
@@ -112,9 +102,6 @@ public class WorldGenAncientTemple extends WorldGenSurfaceStructureAS {
 				// banner colour
 				(w, p, i) -> i.blockState.getBlock() == Blocks.WALL_BANNER ? new Template.BlockInfo(
 						i.pos, Blocks.CARPET.getStateFromMeta(colour.getMetadata()), i.tileentityData) : i,
-				// Wall material
-				(w, p, i) -> i.blockState.getBlock() == Blocks.COBBLESTONE ? new Template.BlockInfo(i.pos,
-						wallMaterial, i.tileentityData) : i,
 				// change ground type to biome's cover block
 				(w, p, i) -> i.blockState.getBlock() == Blocks.DIRT ? new Template.BlockInfo(i.pos,
 						biomeCover, i.tileentityData) : i,
@@ -132,6 +119,10 @@ public class WorldGenAncientTemple extends WorldGenSurfaceStructureAS {
 				// Bookshelf marker
 				(w, p, i) -> {
 					TileEntityBookshelf.markAsNatural(i.tileentityData);
+					return i;
+				},
+				(w, p, i) -> {
+					TileSageLectern.markAsNatural(i.tileentityData);
 					return i;
 				},
 				(w, p, i) -> (i.blockState.getBlock() == WizardryBlocks.receptacle ? new Template.BlockInfo(
@@ -184,29 +175,16 @@ public class WorldGenAncientTemple extends WorldGenSurfaceStructureAS {
 
 			Vec3d vec = GeometryUtils.getCentre(entry.getKey());
 
-			if (entry.getValue().equals(WIZARD_DATA_BLOCK_TAG)) {
+			if (entry.getValue().equals(STONE_GUARDIAN)) {
 
-				EntityWizard wizard = new EntityWizard(world);
-				wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
-				wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
-				wizard.setTowerBlocks(blocksPlaced);
-				world.spawnEntity(wizard);
-
-			} else if (entry.getValue().equals(EVIL_WIZARD_DATA_BLOCK_TAG)) {
-
-				EntityEvilClassWizard wizard = new EntityEvilClassWizard(world);
-				wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
-				wizard.hasStructure = true; // Stops it despawning
-				wizard.armourClass = ItemWizardArmour.ArmourClass.SAGE;
-				wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
-				world.spawnEntity(wizard);
-			} else {
-				// This probably shouldn't happen...
-				Wizardry.logger.info("Unrecognised data block value {} in structure {}", entry.getValue(), structureFile);
+				EntityStoneGuardian guardian = new EntityStoneGuardian(world);
+				guardian.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
+				guardian.onInitialSpawn(world.getDifficultyForLocation(origin), null);
+				guardian.setSeal(Optional.of(new BlockPos(vec.x, vec.y - 1, vec.z)));
+				guardian.addPotionEffect(new PotionEffect(MobEffects.INVISIBILITY, 40));
+				world.spawnEntity(guardian);
 			}
-
 		}
-
 	}
 
 	@SubscribeEvent
@@ -235,4 +213,6 @@ public class WorldGenAncientTemple extends WorldGenSurfaceStructureAS {
 		compound.setInteger("Element", element.ordinal());
 		return compound;
 	}
+
+
 }

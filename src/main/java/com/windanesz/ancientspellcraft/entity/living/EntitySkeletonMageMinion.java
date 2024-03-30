@@ -7,6 +7,7 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.entity.living.ISpellCaster;
 import electroblob.wizardry.entity.living.ISummonedCreature;
+import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.NBTExtras;
@@ -66,7 +67,7 @@ public class EntitySkeletonMageMinion extends EntitySkeletonMage implements ISpe
 	// Data parameter for the skelly's element.
 //	private static final DataParameter<Integer> ELEMENT = EntityDataManager.createKey(EntitySkeletonMageMinion.class, DataSerializers.VARINT);
 
-	private List<Spell> spells = new ArrayList<>(1);
+//	private List<Spell> spells = new ArrayList<>(1);
 
 	private EntityAIAttackSpellImproved<EntitySkeletonMageMinion> spellcastingAI = new EntityAIAttackSpellImproved<EntitySkeletonMageMinion>(this, AISpeed, 15f, 25, 0);
 
@@ -113,6 +114,12 @@ public class EntitySkeletonMageMinion extends EntitySkeletonMage implements ISpe
 	@Override
 	public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata) {
 		livingdata = super.onInitialSpawn(difficulty, livingdata);
+		if (getOwner() instanceof EntityPlayer && ItemArtefact.isArtefactActive((EntityPlayer) getOwner(), ASItems.charm_skeleton_ghosts)) {
+			this.setRare(rand.nextFloat() < 0.3);
+		} else {
+			this.setRare(false);
+		}
+
 		setLeftHanded(false);
 		if (element == Element.MAGIC) {
 			setElement(Element.values()[rand.nextInt(Element.values().length - 1) + 1]);
@@ -253,42 +260,6 @@ public class EntitySkeletonMageMinion extends EntitySkeletonMage implements ISpe
 		this.dataManager.set(ELEMENT, element.ordinal());
 	}
 
-	public void populateSpellList(Element element, Spell spell) {
-		spells = new ArrayList<>(1);
-
-		if (spell != null) {
-			spells.add(spell);
-			return;
-		}
-
-		switch (element) {
-			case FIRE:
-				spells.add(Spells.fireball);
-				break;
-			case ICE:
-				spells.add(Spells.iceball);
-				break;
-			case LIGHTNING:
-				spells.add(Spells.lightning_arrow);
-				break;
-			case EARTH:
-				spells.add(Spells.dart);
-				break;
-			case SORCERY:
-				spells.add(Spells.force_arrow);
-				break;
-			case HEALING:
-				spells.add(ASSpells.healing_heart);
-				break;
-			case NECROMANCY:
-				spells.add(Spells.darkness_orb);
-
-				break;
-			default:
-				spells.add(Spells.magic_missile);
-		}
-
-	}
 	private static int getRandomNumberInRange(int min, int max) {
 		Random r = new Random();
 		return r.nextInt((max - min) + 1) + min;
