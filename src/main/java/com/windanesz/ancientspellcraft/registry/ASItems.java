@@ -462,8 +462,6 @@ public final class ASItems {
 	public static final Item sentience_upgrade = placeholder();
 	public static final Item empowerment_upgrade = placeholder();
 
-	//public static final Item forbidden_tome = placeholder(); TODO
-
 	public static final Item charm_glyph_illumination = placeholder();
 	public static final Item charm_glyph_leeching = placeholder();
 	public static final Item charm_glyph_antigravity = placeholder();
@@ -1054,9 +1052,6 @@ public final class ASItems {
 
 		ItemRegistry.registerItemArtefact(registry, "body_power_gem", AncientSpellcraft.MODID, new ItemASArtefact(EnumRarity.EPIC, ItemArtefact.Type.BODY));
 
-		//registerItem(registry, "forbidden_tome", new ItemWarlockSpellBook()); TODO
-
-		//registerItem(registry, "master_bolt", new ItemMasterBolt());
 
 	}
 

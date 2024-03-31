@@ -7,7 +7,6 @@
                 "max": 3
             },
             "entries": [
-
                 {
                     "type": "item",
                     "name": "ancientspellcraft:ancient_spellcraft_spell_book",
@@ -42,6 +41,17 @@
                     "name": "ancientspellcraft:stone_tablet_small",
                     "entryName": "stone_tablet_small",
                     "weight": 1
+                },
+                {
+                    "type": "item",
+                    "name": "ancientspellcraft:forbidden_tome",
+                    "weight": 1,
+                    "functions": [
+                        {
+                            "function": "ebwizardry:random_spell",
+                            "undiscovered_bias": 0.3
+                        }
+                    ]
                 },
                 {
                     "type": "item",
