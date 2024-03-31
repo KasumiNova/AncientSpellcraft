@@ -1,5 +1,6 @@
 package com.windanesz.ancientspellcraft.mixin.minecraft;
 
+import com.windanesz.ancientspellcraft.mixin.modrefs.HandleDiffuserRef;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
@@ -14,6 +15,6 @@ public class MixinItemPotion {
 
 	@Inject(method = "onItemUseFinish", at = @At("HEAD"))
 	private void mixinPerformEffectConsistent(ItemStack stack, World world, EntityLivingBase entityLiving, CallbackInfoReturnable<ItemStack> cir) {
-		HandleDiffuser.diffuserLogic(stack, world, entityLiving);
+		HandleDiffuserRef.diffuser(stack, world, entityLiving);
 	}
 }
