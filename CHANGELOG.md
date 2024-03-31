@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.7.1] - 2024-03-31
+### :sparkles: New Features
+- [`614c974`](https://github.com/WinDanesz/AncientSpellcraft/commit/614c97480510780cb1d9e0f0f77216a00f9b70c6) - Baubles is now a required dependency, added warlock books to shrine loot *(commit by [@WinDanesz](https://github.com/WinDanesz))*
+
+### :bug: Bug Fixes
+- [`f64fc3b`](https://github.com/WinDanesz/AncientSpellcraft/commit/f64fc3bf8180bad0025b6ba17e2ed831abe14328) - Fixed mixin crash on startup, added tests *(commit by [@WinDanesz](https://github.com/WinDanesz))*
+
+
 ## [v1.7.0] - 2024-03-30
 ### :sparkles: New Features
 - [`2a52766`](https://github.com/WinDanesz/AncientSpellcraft/commit/2a527664bfc69f9a7bee0d624d488fd5d84dc68f) - Buffed coal amount from the Bottomless Coal Bucket artefact (2-5 -> 5-15) *(commit by [@WinDanesz](https://github.com/WinDanesz))*
@@ -371,3 +379,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [v1.6.2]: https://github.com/WinDanesz/AncientSpellcraft/compare/v1.6.1...v1.6.2
 [v1.6.3]: https://github.com/WinDanesz/AncientSpellcraft/compare/v1.6.2...v1.6.3
 [v1.7.0]: https://github.com/WinDanesz/AncientSpellcraft/compare/v1.6.3...v1.7.0
+[v1.7.1]: https://github.com/WinDanesz/AncientSpellcraft/compare/v1.7.0...v1.7.1
