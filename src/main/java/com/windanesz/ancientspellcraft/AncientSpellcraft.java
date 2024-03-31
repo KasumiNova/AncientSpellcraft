@@ -67,6 +67,7 @@ public class AncientSpellcraft {
 			+ "after:jei@[4.15.0,);"
 			+ "after:artemislib;";
 
+
 	public static final Random rand = new Random();
 	public static final Material DEVORITIUM = (new Material(MapColor.BLACK));
 	public static final Item.ToolMaterial DEVORITIUM_TOOL_MATERIAL = EnumHelper.addToolMaterial("devoritium", 2, 250, 6.0F, 2.0F, 0);
