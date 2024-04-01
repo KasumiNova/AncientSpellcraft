@@ -2,6 +2,7 @@ package com.windanesz.ancientspellcraft.spell;
 
 import com.google.common.collect.Sets;
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
+import com.windanesz.ancientspellcraft.Settings;
 import com.windanesz.ancientspellcraft.registry.ASItems;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.ItemWizardArmour;
@@ -34,6 +35,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 public class AbsorbObject extends SpellRay implements IClassSpell {
@@ -131,8 +135,11 @@ public class AbsorbObject extends SpellRay implements IClassSpell {
 				}
 
 				if (BlockUtils.isBlockUnbreakable(world, pos)) {return false;}
+				List<String> blacklist = new ArrayList<>(Arrays.asList(Settings.generalSettings.absorb_object_block_blacklist));
+				if (blacklist.contains(world.getBlockState(pos).getBlock().getRegistryName().toString())) {return false;}
 				// Reworked to respect the rules, but since we might break multiple blocks this is left as an optimisation
 				if (!EntityUtils.canDamageBlocks(caster, world)) {return false;}
+
 
 				boolean flag = false;
 

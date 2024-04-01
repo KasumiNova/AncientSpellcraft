@@ -553,6 +553,8 @@ public class Settings {
 		@Config.RangeInt(min = 100, max = 10000)
 		public int vault_key_usage_mana_cost = 5000;
 
+		@Config.Name("Absorb Object Block Blacklist")
+		public String[] absorb_object_block_blacklist = {};
 
 		@Config.Name("Runic Shield Armor Amount")
 		@Config.RequiresMcRestart
