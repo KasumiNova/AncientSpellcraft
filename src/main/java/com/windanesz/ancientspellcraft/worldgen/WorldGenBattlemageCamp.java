@@ -3,10 +3,12 @@ package com.windanesz.ancientspellcraft.worldgen;
 import com.google.common.collect.ImmutableMap;
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.Settings;
+import com.windanesz.ancientspellcraft.entity.living.EntityClassWizard;
 import com.windanesz.ancientspellcraft.entity.living.EntityEvilClassWizard;
 import com.windanesz.ancientspellcraft.integration.antiqueatlas.ASAntiqueAtlasIntegration;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.living.EntityWizard;
+import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.registry.WizardryAdvancementTriggers;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.GeometryUtils;
@@ -128,8 +130,9 @@ public class WorldGenBattlemageCamp extends WorldGenSurfaceStructureAS {
 
 			if (entry.getValue().equals(WIZARD_DATA_BLOCK_TAG)) {
 
-				EntityWizard wizard = new EntityWizard(world);
+				EntityClassWizard wizard = new EntityClassWizard(world);
 				wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
+				wizard.setArmourClass(ItemWizardArmour.ArmourClass.BATTLEMAGE);
 				wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
 				wizard.setTowerBlocks(blocksPlaced);
 				world.spawnEntity(wizard);
@@ -137,6 +140,7 @@ public class WorldGenBattlemageCamp extends WorldGenSurfaceStructureAS {
 			} else if (entry.getValue().equals(EVIL_WIZARD_DATA_BLOCK_TAG)) {
 
 				EntityEvilClassWizard wizard = new EntityEvilClassWizard(world);
+				wizard.setArmourClass(ItemWizardArmour.ArmourClass.BATTLEMAGE);
 				wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
 				wizard.hasStructure = true; // Stops it despawning
 				wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
