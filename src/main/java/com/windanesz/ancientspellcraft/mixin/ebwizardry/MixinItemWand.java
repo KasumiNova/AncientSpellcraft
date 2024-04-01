@@ -35,7 +35,7 @@ import java.util.Random;
 public class MixinItemWand {
 
 
-	@Shadow public Element element;
+	@Shadow(remap = false) public Element element;
 
 	@Inject(method = "hitEntity", at = @At("RETURN"), remap = false)
 	private void modifyItemList(ItemStack stack, EntityLivingBase originalTarget, EntityLivingBase wielder, CallbackInfoReturnable<Boolean> cir) {
