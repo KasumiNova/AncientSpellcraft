@@ -9,12 +9,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Mod;
-
 
 @Mod.EventBusSubscriber
 public class ItemUnsealingScroll extends ItemRareScroll {
@@ -47,6 +47,7 @@ public class ItemUnsealingScroll extends ItemRareScroll {
 					((TileArcaneWall) tile).setBeingDispelled(true);
 					if (!caster.isCreative()) {
 
+						return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, caster.getHeldItem(hand));
 					}
 				}
 			}
