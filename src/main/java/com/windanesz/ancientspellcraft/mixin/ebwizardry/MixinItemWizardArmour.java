@@ -23,15 +23,15 @@ import java.util.List;
 @Mixin(ItemWizardArmour.class)
 public class MixinItemWizardArmour {
 
-	@Inject(method = "addInformation", at = @At("RETURN"), remap = false)
-	private void modifyTooltip(ItemStack stack, World world, List<String> tooltip, ITooltipFlag advanced, CallbackInfo ci) {
-		if (Settings.generalSettings.warlock_bonus_override) {
-			if (((ItemWizardArmour) (Object) this).armourClass == ItemWizardArmour.ArmourClass.WARLOCK) {
-				// Replace the last line of tooltip with the new content
-				tooltip.set(tooltip.size() - 1, AncientSpellcraft.proxy.translate("item." + AncientSpellcraft.MODID + ":warlock_armour.full_set_bonus", new Style().setColor(TextFormatting.AQUA), (int) (Settings.generalSettings.warlock_bonus_potency_amount * 100)));
-			}
-		}
-	}
+//	@Inject(method = "addInformation", at = @At("RETURN"), remap = false)
+//	private void modifyTooltip(ItemStack stack, World world, List<String> tooltip, ITooltipFlag advanced, CallbackInfo ci) {
+//		if (Settings.generalSettings.warlock_bonus_override) {
+//			if (((ItemWizardArmour) (Object) this).armourClass == ItemWizardArmour.ArmourClass.WARLOCK) {
+//				// Replace the last line of tooltip with the new content
+//				tooltip.set(tooltip.size() - 1, AncientSpellcraft.proxy.translate("item." + AncientSpellcraft.MODID + ":warlock_armour.full_set_bonus", new Style().setColor(TextFormatting.AQUA), (int) (Settings.generalSettings.warlock_bonus_potency_amount * 100)));
+//			}
+//		}
+//	}
 
 	@Inject(method = "onLivingEquipmentChangeEvent", at = @At("HEAD"), cancellable = true, remap = false)
 	private static void onLivingEquipmentChangeEvent(LivingEquipmentChangeEvent event, CallbackInfo info) {
