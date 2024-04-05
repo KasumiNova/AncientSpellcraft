@@ -9,6 +9,7 @@ import com.windanesz.ancientspellcraft.entity.living.EntityEvilClassWizard;
 import com.windanesz.ancientspellcraft.registry.ASItems;
 import com.windanesz.ancientspellcraft.registry.ASSpells;
 import com.windanesz.ancientspellcraft.registry.ASTabs;
+import com.windanesz.ancientspellcraft.spell.IClassSpell;
 import com.windanesz.ancientspellcraft.spell.RunesmithingSpellBase;
 import com.windanesz.ancientspellcraft.spell.Runeword;
 import com.windanesz.ancientspellcraft.spell.RunewordFury;
@@ -474,6 +475,10 @@ public class ItemBattlemageSword extends ItemSword implements ISpellCastingItem,
 		}
 
 		Spell spell = WandHelper.getCurrentSpell(stack);
+		// +0.5f is necessary due to the error in the way floats are calculated.
+		text.add(Wizardry.proxy.translate("item." + AncientSpellcraft.MODID + ":battlemage_sword.buff",
+				new Style().setColor(TextFormatting.DARK_GRAY),
+				(int) ((tier.level + 1) * (Constants.POTENCY_INCREASE_PER_TIER) * 100 + 0.5f)));
 
 		boolean discovered = !Wizardry.settings.discoveryMode || player.isCreative() || WizardData.get(player) == null
 				|| WizardData.get(player).hasSpellBeenDiscovered(spell);
@@ -1144,21 +1149,12 @@ public class ItemBattlemageSword extends ItemSword implements ISpellCastingItem,
 			modifiers.set(SpellModifiers.POTENCY, 1.0f + (this.tier.level + 1) * Constants.POTENCY_INCREASE_PER_TIER, true);
 		//	progressionModifier *= ELEMENTAL_PROGRESSION_MODIFIER;
 		}
-		//
-		//		if (WizardData.get(player) != null) {
-		//
-		//			if (!WizardData.get(player).hasSpellBeenDiscovered(spell)) {
-		//				// Casting an undiscovered spell now grants 5x progression
-		//				progressionModifier *= DISCOVERY_PROGRESSION_MODIFIER;
-		//			}
-		//
-		//			if (!WizardData.get(player).hasReachedTier(this.tier.next())) {
-		//				// 1.5x progression for tiers that have already been reached
-		//				progressionModifier *= SECOND_TIME_PROGRESSION_MODIFIER;
-		//			}
-		//		}
 
-		//		modifiers.set(SpellModifiers.PROGRESSION, progressionModifier, false);
+		if (spell instanceof IClassSpell && ((IClassSpell) spell).getArmourClass() == ItemWizardArmour.ArmourClass.BATTLEMAGE) {
+			modifiers.set(SpellModifiers.POTENCY, 1.0f + (this.tier.level + 1) * Constants.POTENCY_INCREASE_PER_TIER, true);
+		} else if (element != spell.getElement() && WandHelper.getUpgradeLevel(stack, ASItems.empowerment_upgrade) > 0) {
+			modifiers.set(SpellModifiers.POTENCY, 1.0f + WandHelper.getUpgradeLevel(stack, ASItems.empowerment_upgrade) * (float) Settings.generalSettings.empowerment_upgrade_potency_gain, true);
+		}
 
 		return modifiers;
 	}

@@ -22,8 +22,11 @@ import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.SpellModifiers;
 import electroblob.wizardry.util.WandHelper;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.ai.EntityAIWander;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,6 +37,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -342,6 +346,40 @@ public class EntityEvilClassWizard extends EntityEvilWizard implements ICustomCo
 
 	public void decrementShieldDisabledTick() {
 		dataManager.set(SHIELD_DISABLED_TICK, (dataManager.get(SHIELD_DISABLED_TICK)) - 1);
+	}
+
+
+	@Override
+	protected void blockUsingShield(EntityLivingBase attacker) {
+		attacker.knockBack(this, 0.1F, posX - attacker.posX, posZ - attacker.posZ);
+
+		if (attacker.getHeldItemMainhand().getItem().canDisableShield(attacker.getHeldItemMainhand(), getActiveItemStack(), this, attacker)) {
+			disableShield();
+		}
+	}
+
+	private void disableShield() {
+		float f = 1F + (float) EnchantmentHelper.getEfficiencyModifier(this) * 0.05F;
+
+		if (rand.nextFloat() < f) {
+			setShieldDisabledTick(80);
+			resetActiveHand();
+			world.setEntityState(this, (byte) 30);
+		}
+	}
+
+	@Override
+	protected void damageShield(float damage) {
+		if (damage >= 3.0F && activeItemStack.getItem().isShield(activeItemStack, this)) {
+			int i = 1 + MathHelper.floor(damage);
+			getShieldStack().damageItem(i, this);
+			setActiveHand(EnumHand.OFF_HAND);
+
+			if (getShieldStack().isEmpty()) {  //shield breaks
+				setShieldStack(ItemStack.EMPTY);
+				playSound(SoundEvents.ITEM_SHIELD_BREAK, 0.8F, 0.8F + world.rand.nextFloat() * 0.4F);
+			}
+		}
 	}
 
 }

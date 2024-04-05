@@ -201,10 +201,6 @@ public class ItemWarlockOrb extends Item implements ISpellCastingItem, IWorkbenc
 		EntityPlayer player = net.minecraft.client.Minecraft.getMinecraft().player;
 		if (player == null) { return; }
 
-		//text.add(Wizardry.proxy.translate("item.ancientspellcraft:battlemage_sword_armour_requirements_tooltip"));
-
-		//Element element = WizardArmourUtils.getFullSetElementForClass(player, ItemWizardArmour.ArmourClass.BATTLEMAGE);
-
 		if (element != null && element != Element.MAGIC) {
 			// +0.5f is necessary due to the error in the way floats are calculated.
 			text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.buff",
