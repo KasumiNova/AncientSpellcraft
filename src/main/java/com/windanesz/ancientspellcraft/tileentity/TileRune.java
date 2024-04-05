@@ -398,9 +398,9 @@ public class TileRune extends TileEntity implements ITickable {
 			compound.setInteger("ritual_lifetime", ritualCurrentLifeTime);
 		}
 		compound.setInteger("caster_id", casterId);
-		//		if (getCaster() != null) {
-		//			compound.setUniqueId("caster_uuid", casterUUID);
-		//		}
+		if (casterUUID == null) {
+			casterUUID = UUID.randomUUID();
+		}
 		compound.setTag("caster_uuid", NBTUtil.createUUIDTag(casterUUID));
 		compound.setInteger("rotation", direction.getIndex());
 		return compound;
