@@ -53,6 +53,7 @@ public class BlockDimensionFocus extends Block {
 				NBTTagCompound nbt = data.getVariable(OrbSpace.LAST_ORB);
 				if (nbt != null) {
 					ASUtils.giveStackToPlayer(playerIn, new ItemStack(nbt));
+					data.setVariable(OrbSpace.LAST_ORB, null);
 				}
 				return true;
 			}
