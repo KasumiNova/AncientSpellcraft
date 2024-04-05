@@ -81,19 +81,4 @@ public class WorldProviderPocketDim extends WorldProvider {
 		return false;
 	}
 
-//	/**
-//	 * Called when a Player is added to the provider's world.
-//	 */
-//	@Override
-//	public void onPlayerAdded(net.minecraft.entity.player.EntityPlayerMP player) {
-////		PocketDimUtils.onPlayerEnteredPocketDim(player, world);
-//	}
-
-//	/**
-//	 * Called when a Player is removed from the provider's world.
-//	 */
-//	@Override
-//	public void onPlayerRemoved(net.minecraft.entity.player.EntityPlayerMP player) {
-//		PocketDimUtils.onPlayerLeftPocketDim(player, world);
-//	}
 }

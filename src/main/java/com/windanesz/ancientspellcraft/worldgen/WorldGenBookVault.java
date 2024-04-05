@@ -2,7 +2,6 @@ package com.windanesz.ancientspellcraft.worldgen;
 
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.Settings;
-import com.windanesz.ancientspellcraft.entity.living.EntityStoneGuardian;
 import com.windanesz.ancientspellcraft.integration.antiqueatlas.ASAntiqueAtlasIntegration;
 import com.windanesz.ancientspellcraft.tileentity.TileSageLectern;
 import electroblob.wizardry.constants.Element;
@@ -10,7 +9,6 @@ import electroblob.wizardry.registry.WizardryAdvancementTriggers;
 import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.tileentity.TileEntityBookshelf;
 import electroblob.wizardry.util.BlockUtils;
-import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.worldgen.MossifierTemplateProcessor;
 import electroblob.wizardry.worldgen.MultiTemplateProcessor;
 import electroblob.wizardry.worldgen.WoodTypeTemplateProcessor;
@@ -19,13 +17,10 @@ import net.minecraft.block.BlockStoneBrick;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.structure.template.ITemplateProcessor;
@@ -38,26 +33,17 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
 @Mod.EventBusSubscriber
 public class WorldGenBookVault extends WorldGenSurfaceStructureAS {
 
-	// TODO: Add wizard towers to the /locate command
-	// This requires some careful manipulation of Random objects to replicate the positions exactly for the current
-	// world. See the end of ChunkGeneratorOverworld for the relevant methods.
-
-	private static final String STONE_GUARDIAN = "stone_guardian";
-
-	public WorldGenBookVault() {
-	}
+	public WorldGenBookVault() {}
 
 	@Override
 	public String getStructureName() {
-		return "bookVaultRarity";
+		return "book_vault";
 	}
 
 	@Override
@@ -128,25 +114,6 @@ public class WorldGenBookVault extends WorldGenSurfaceStructureAS {
 
 		template.addBlocksToWorld(world, origin, processor, settings, 2 | 16);
 		ASAntiqueAtlasIntegration.markMysteryStructure(world, origin.getX(), origin.getZ());
-
-		// Wizard spawning
-		Map<BlockPos, String> dataBlocks = template.getDataBlocks(origin, settings);
-
-		for (
-				Map.Entry<BlockPos, String> entry : dataBlocks.entrySet()) {
-
-			Vec3d vec = GeometryUtils.getCentre(entry.getKey());
-
-			if (entry.getValue().equals(STONE_GUARDIAN)) {
-
-				EntityStoneGuardian guardian = new EntityStoneGuardian(world);
-				guardian.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
-				guardian.onInitialSpawn(world.getDifficultyForLocation(origin), null);
-				guardian.setSeal(Optional.of(new BlockPos(vec.x, vec.y - 1, vec.z)));
-				guardian.addPotionEffect(new PotionEffect(MobEffects.INVISIBILITY, 40));
-				world.spawnEntity(guardian);
-			}
-		}
 	}
 
 	@SubscribeEvent

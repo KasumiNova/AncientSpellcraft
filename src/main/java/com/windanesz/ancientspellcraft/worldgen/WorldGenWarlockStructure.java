@@ -2,9 +2,7 @@ package com.windanesz.ancientspellcraft.worldgen;
 
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.Settings;
-import com.windanesz.ancientspellcraft.entity.living.EntityEvilClassWizard;
 import com.windanesz.ancientspellcraft.integration.antiqueatlas.ASAntiqueAtlasIntegration;
-import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.block.BlockRunestone;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.item.ItemWizardArmour;
@@ -19,12 +17,12 @@ import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 public class WorldGenWarlockStructure extends WorldGenSurfaceStructure {
-
-	private static final String EVIL_WARLOCK_TAG = "warlock";
 
 	@Override
 	public String getStructureName(){
@@ -49,6 +47,7 @@ public class WorldGenWarlockStructure extends WorldGenSurfaceStructure {
 
 	@Override
 	public void spawnStructure(Random random, World world, BlockPos origin, Template template, PlacementSettings settings, ResourceLocation structureFile){
+		final Set<BlockPos> blocksPlaced = new HashSet<>();
 
 		final Element element = Element.values()[1 + random.nextInt(Element.values().length-1)];
 
@@ -59,27 +58,11 @@ public class WorldGenWarlockStructure extends WorldGenSurfaceStructure {
 
 		ASAntiqueAtlasIntegration.markMysteryStructure(world, origin.getX(), origin.getZ());
 
-		// Shrine core
+		// Entity spawning
 		Map<BlockPos, String> dataBlocks = template.getDataBlocks(origin, settings);
-
-		for(Map.Entry<BlockPos, String> entry : dataBlocks.entrySet()){
-
+		for (Map.Entry<BlockPos, String> entry : dataBlocks.entrySet()) {
 			Vec3d vec = GeometryUtils.getCentre(entry.getKey());
-
-			if(entry.getValue().equals(EVIL_WARLOCK_TAG)){
-
-				EntityEvilClassWizard wizard = new EntityEvilClassWizard(world);
-				wizard.setElement(element);
-				wizard.setArmourClass(ItemWizardArmour.ArmourClass.WARLOCK);
-				wizard.hasStructure = true; // Stops it despawning
-				wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
-				wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
-				world.spawnEntity(wizard);
-
-			}else{
-				// This probably shouldn't happen...
-				Wizardry.logger.info("Unrecognised data block value {} in structure {}", entry.getValue(), structureFile);
-			}
+			WorldGenUtils.spawnEntityByType(world, entry.getValue(), ItemWizardArmour.ArmourClass.WARLOCK, origin, vec, blocksPlaced, Element.MAGIC, false);
 		}
 	}
 

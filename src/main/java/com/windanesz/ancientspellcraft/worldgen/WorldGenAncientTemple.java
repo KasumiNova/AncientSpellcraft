@@ -2,10 +2,10 @@ package com.windanesz.ancientspellcraft.worldgen;
 
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.Settings;
-import com.windanesz.ancientspellcraft.entity.living.EntityStoneGuardian;
 import com.windanesz.ancientspellcraft.integration.antiqueatlas.ASAntiqueAtlasIntegration;
 import com.windanesz.ancientspellcraft.tileentity.TileSageLectern;
 import electroblob.wizardry.constants.Element;
+import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.registry.WizardryAdvancementTriggers;
 import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.tileentity.TileEntityBookshelf;
@@ -19,10 +19,8 @@ import net.minecraft.block.BlockStoneBrick;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -39,21 +37,13 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
 @Mod.EventBusSubscriber
 public class WorldGenAncientTemple extends WorldGenSurfaceStructureAS {
 
-	// TODO: Add wizard towers to the /locate command
-	// This requires some careful manipulation of Random objects to replicate the positions exactly for the current
-	// world. See the end of ChunkGeneratorOverworld for the relevant methods.
-
-	private static final String STONE_GUARDIAN = "stone_guardian";
-
-	public WorldGenAncientTemple() {
-	}
+	public WorldGenAncientTemple() {}
 
 	@Override
 	public String getStructureName() {
@@ -128,59 +118,13 @@ public class WorldGenAncientTemple extends WorldGenSurfaceStructureAS {
 
 		template.addBlocksToWorld(world, origin, processor, settings, 2 | 16);
 
-		IBlockState origins = world.getBlockState(origin);
-
-		for (int i = -1; i > -8; i--) {
-
-			// add south
-			for (int j = 0; j < 16; j++) {
-
-				//add east
-				for (int k = 0; k < 16; k++) {
-
-//					if (settings.getMirror() == Mirror.LEFT_RIGHT) {
-//
-//					}
-//					if (settings.getRotation() == Rotation.CLOCKWISE_90) {
-//						j = j * -1;
-//					}
-//					if (settings.getRotation() == Rotation.COUNTERCLOCKWISE_90) {
-//						k = k * -1;
-//					}
-//					if (settings.getRotation() == Rotation.CLOCKWISE_180) {
-//						j = j * -1;
-//						k = k * -1;
-//					}
-
-//					BlockPos currPos = new BlockPos(origin.getX() + j, origin.getY() +i, origin.getZ() + k);
-//					if (world.isAirBlock(currPos) || !world.getBlockState(currPos).isTopSolid()) {
-//						world.setBlockState(currPos, biome.fillerBlock);
-//					}
-				}
-
-			}
-
-		}
-
 		ASAntiqueAtlasIntegration.markMysteryStructure(world, origin.getX(), origin.getZ());
 
-		// Wizard spawning
+		// Entity spawning
 		Map<BlockPos, String> dataBlocks = template.getDataBlocks(origin, settings);
-
-		for (
-				Map.Entry<BlockPos, String> entry : dataBlocks.entrySet()) {
-
+		for (Map.Entry<BlockPos, String> entry : dataBlocks.entrySet()) {
 			Vec3d vec = GeometryUtils.getCentre(entry.getKey());
-
-			if (entry.getValue().equals(STONE_GUARDIAN)) {
-
-				EntityStoneGuardian guardian = new EntityStoneGuardian(world);
-				guardian.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
-				guardian.onInitialSpawn(world.getDifficultyForLocation(origin), null);
-				guardian.setSeal(Optional.of(new BlockPos(vec.x, vec.y - 1, vec.z)));
-				guardian.addPotionEffect(new PotionEffect(MobEffects.INVISIBILITY, 40));
-				world.spawnEntity(guardian);
-			}
+			WorldGenUtils.spawnEntityByType(world, entry.getValue(), ItemWizardArmour.ArmourClass.BATTLEMAGE, origin, vec, blocksPlaced, Element.MAGIC, false);
 		}
 	}
 

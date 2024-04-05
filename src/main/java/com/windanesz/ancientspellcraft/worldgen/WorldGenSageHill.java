@@ -3,12 +3,9 @@ package com.windanesz.ancientspellcraft.worldgen;
 import com.google.common.collect.ImmutableMap;
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.Settings;
-import com.windanesz.ancientspellcraft.entity.living.EntityClassWizard;
-import com.windanesz.ancientspellcraft.entity.living.EntityEvilClassWizard;
-import com.windanesz.ancientspellcraft.entity.living.EntitySkeletonMage;
 import com.windanesz.ancientspellcraft.integration.antiqueatlas.ASAntiqueAtlasIntegration;
 import com.windanesz.ancientspellcraft.tileentity.TileSageLectern;
-import electroblob.wizardry.Wizardry;
+import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.registry.WizardryAdvancementTriggers;
 import electroblob.wizardry.tileentity.TileEntityBookshelf;
@@ -44,14 +41,6 @@ import java.util.Set;
 
 @Mod.EventBusSubscriber
 public class WorldGenSageHill extends WorldGenSurfaceStructureAS {
-
-	// TODO: Add wizard towers to the /locate command
-	// This requires some careful manipulation of Random objects to replicate the positions exactly for the current
-	// world. See the end of ChunkGeneratorOverworld for the relevant methods.
-
-	private static final String WIZARD_DATA_BLOCK_TAG = "wizard";
-	private static final String EVIL_WIZARD_DATA_BLOCK_TAG = "evil_wizard";
-	private static final String SKELETON_MAGE_DATA_BLOCK_TAG = "skeleton_mage";
 
 	private final Map<BiomeDictionary.Type, IBlockState> specialWallBlocks;
 
@@ -136,91 +125,26 @@ public class WorldGenSageHill extends WorldGenSurfaceStructureAS {
 				(w, p, i) -> {
 					TileSageLectern.markAsNatural(i.tileentityData);
 					return i;
+				},
+				// Block recording (the process() method doesn't get called for structure voids)
+				(w, p, i) -> {
+					if (i.blockState.getBlock() != Blocks.AIR) {blocksPlaced.add(p);}
+					return i;
 				}
 
 		);
 
 		template.addBlocksToWorld(world, origin, processor, settings, 2 | 16);
 
-		IBlockState origins = world.getBlockState(origin);
-
-		for (int i = -1; i > -8; i--) {
-
-			// add south
-			for (int j = 0; j < 16; j++) {
-
-				//add east
-				for (int k = 0; k < 16; k++) {
-//					if (settings.getMirror() == Mirror.LEFT_RIGHT) {
-//
-//					}
-//					if (settings.getRotation() == Rotation.CLOCKWISE_90) {
-//						j = j * -1;
-//					}
-//					if (settings.getRotation() == Rotation.COUNTERCLOCKWISE_90) {
-//						k = k * -1;
-//					}
-//					if (settings.getRotation() == Rotation.CLOCKWISE_180) {
-//						j = j * -1;
-//						k = k * -1;
-//					}
-//
-//					BlockPos currPos = new BlockPos(origin.getX() + j, origin.getY() +i, origin.getZ() + k);
-//					if (world.isAirBlock(currPos) || !world.getBlockState(currPos).isTopSolid()) {
-//						world.setBlockState(currPos, biome.fillerBlock);
-//					}
-				}
-
-			}
-
-		}
-
 		ASAntiqueAtlasIntegration.markSageHill(world, origin.getX(), origin.getZ());
 
-		// Wizard spawning
+		// Entity spawning
 		Map<BlockPos, String> dataBlocks = template.getDataBlocks(origin, settings);
-
-		for (
-				Map.Entry<BlockPos, String> entry : dataBlocks.entrySet()) {
-
+		for (Map.Entry<BlockPos, String> entry : dataBlocks.entrySet()) {
 			Vec3d vec = GeometryUtils.getCentre(entry.getKey());
-
-			switch (entry.getValue()) {
-				case WIZARD_DATA_BLOCK_TAG: {
-
-					EntityClassWizard wizard = new EntityClassWizard(world);
-					wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
-					wizard.setArmourClass(ItemWizardArmour.ArmourClass.SAGE);
-					wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
-					wizard.setTowerBlocks(blocksPlaced);
-					world.spawnEntity(wizard);
-
-					break;
-				}
-				case EVIL_WIZARD_DATA_BLOCK_TAG: {
-					EntityEvilClassWizard wizard = new EntityEvilClassWizard(world);
-					wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
-					wizard.hasStructure = true; // Stops it despawning
-					wizard.setArmourClass(ItemWizardArmour.ArmourClass.SAGE);
-					wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
-					world.spawnEntity(wizard);
-					break;
-				}
-				case SKELETON_MAGE_DATA_BLOCK_TAG:
-
-					EntitySkeletonMage skeleton = new EntitySkeletonMage(world);
-					skeleton.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
-					skeleton.onInitialSpawn(world.getDifficultyForLocation(origin), null);
-					world.spawnEntity(skeleton);
-					break;
-				default:
-					// This probably shouldn't happen...
-					Wizardry.logger.info("Unrecognised data block value {} in structure {}", entry.getValue(), structureFile);
-					break;
-			}
-
+			WorldGenUtils.spawnEntityByType(world, entry.getValue(), ItemWizardArmour.ArmourClass.BATTLEMAGE, origin, vec, blocksPlaced,
+					Element.values()[1 + random.nextInt(Element.values().length - 1)], false);
 		}
-
 	}
 
 	@SubscribeEvent
@@ -231,17 +155,17 @@ public class WorldGenSageHill extends WorldGenSurfaceStructureAS {
 	}
 
 	private static float getBiomeMossiness(Biome biome) {
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DENSE)) { return 0.7f; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.JUNGLE)) { return 0.7f; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.WET)) { return 0.5f; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SWAMP)) { return 0.5f; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.FOREST)) { return 0.3f; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.LUSH)) { return 0.3f; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DRY)) { return 0; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.COLD)) { return 0; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DEAD)) { return 0; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.WASTELAND)) { return 0; }
-		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.NETHER)) { return 0; }
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DENSE)) {return 0.7f;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.JUNGLE)) {return 0.7f;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.WET)) {return 0.5f;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SWAMP)) {return 0.5f;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.FOREST)) {return 0.3f;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.LUSH)) {return 0.3f;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DRY)) {return 0;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.COLD)) {return 0;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DEAD)) {return 0;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.WASTELAND)) {return 0;}
+		if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.NETHER)) {return 0;}
 		return 0.1f; // Everything else (plains, etc.) has a small amount of moss
 	}
 }

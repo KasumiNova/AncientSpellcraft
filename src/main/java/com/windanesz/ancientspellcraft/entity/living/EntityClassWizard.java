@@ -248,9 +248,6 @@ public class EntityClassWizard extends EntityWizard implements ICustomCooldown, 
 			this.setItemStackToSlot(slot, new ItemStack(ItemWizardArmour.getArmour(element, this.getArmourClass(), slot)));
 		}
 
-		// Default chance is 0.085f, for reference.
-		for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {this.setDropChance(slot, 0.0f);}
-
 		// All wizards know magic missile, even if it is disabled.
 
 		int spellCount;

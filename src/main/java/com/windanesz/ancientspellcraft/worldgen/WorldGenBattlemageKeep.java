@@ -3,10 +3,8 @@ package com.windanesz.ancientspellcraft.worldgen;
 import com.google.common.collect.ImmutableMap;
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.Settings;
-import com.windanesz.ancientspellcraft.entity.living.EntityClassWizard;
-import com.windanesz.ancientspellcraft.entity.living.EntityEvilClassWizard;
 import com.windanesz.ancientspellcraft.integration.antiqueatlas.ASAntiqueAtlasIntegration;
-import electroblob.wizardry.Wizardry;
+import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.registry.WizardryAdvancementTriggers;
 import electroblob.wizardry.util.BlockUtils;
@@ -20,7 +18,6 @@ import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.BlockStoneSlab;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
@@ -78,7 +75,7 @@ public class WorldGenBattlemageKeep extends WorldGenSurfaceStructureAS {
 		specialSlabBlocks = ImmutableMap.of(
 				BiomeDictionary.Type.MESA, Blocks.STONE_SLAB2.getDefaultState(),
 				BiomeDictionary.Type.MOUNTAIN, Blocks.STONE_SLAB.getDefaultState(),
-				BiomeDictionary.Type.NETHER,Blocks.STONE_SLAB.getDefaultState().withProperty(VARIANT, BlockStoneSlab.EnumType.NETHERBRICK),
+				BiomeDictionary.Type.NETHER, Blocks.STONE_SLAB.getDefaultState().withProperty(VARIANT, BlockStoneSlab.EnumType.NETHERBRICK),
 				BiomeDictionary.Type.SANDY, Blocks.STONE_SLAB.getDefaultState().withProperty(VARIANT, BlockStoneSlab.EnumType.SAND)
 		);
 	}
@@ -103,7 +100,6 @@ public class WorldGenBattlemageKeep extends WorldGenSurfaceStructureAS {
 	public ResourceLocation getStructureFile(Random random) {
 		return AncientSpellcraft.settings.battlemageKeepFiles[random.nextInt(AncientSpellcraft.settings.battlemageKeepFiles.length)];
 	}
-
 
 	@Override
 	public void spawnStructure(Random random, World world, BlockPos origin, Template template, PlacementSettings settings, ResourceLocation structureFile) {
@@ -142,9 +138,9 @@ public class WorldGenBattlemageKeep extends WorldGenSurfaceStructureAS {
 				// Wall material
 				(w, p, i) -> i.blockState.getBlock() == Blocks.STONE_STAIRS ? new Template.BlockInfo(i.pos,
 						stairMaterial
-						.withProperty(BlockStairs.FACING, i.blockState.getValue(BlockStairs.FACING))
-						.withProperty(BlockStairs.HALF, i.blockState.getValue(BlockStairs.HALF))
-						.withProperty(BlockStairs.SHAPE, i.blockState.getValue(BlockStairs.SHAPE))
+								.withProperty(BlockStairs.FACING, i.blockState.getValue(BlockStairs.FACING))
+								.withProperty(BlockStairs.HALF, i.blockState.getValue(BlockStairs.HALF))
+								.withProperty(BlockStairs.SHAPE, i.blockState.getValue(BlockStairs.SHAPE))
 						, i.tileentityData) : i,
 				// Wall material
 				(w, p, i) -> i.blockState.getBlock() == Blocks.STONE_SLAB ? new Template.BlockInfo(i.pos,
@@ -174,7 +170,7 @@ public class WorldGenBattlemageKeep extends WorldGenSurfaceStructureAS {
 					settings.getBoundingBox().minX, settings.getBoundingBox().minY - 8, settings.getBoundingBox().minZ,
 					settings.getBoundingBox().maxX, settings.getBoundingBox().minY, settings.getBoundingBox().maxZ)) {
 				// Place top blocks
-				if (currPos.getY() == settings.getBoundingBox().minY  && world.canSnowAt(currPos, true) && world.isAirBlock(currPos)) {
+				if (currPos.getY() == settings.getBoundingBox().minY && world.canSnowAt(currPos, true) && world.isAirBlock(currPos)) {
 					world.setBlockState(currPos, Blocks.SNOW_LAYER.getDefaultState(), 2);
 				} else {
 					// Edge blending
@@ -194,42 +190,12 @@ public class WorldGenBattlemageKeep extends WorldGenSurfaceStructureAS {
 
 		ASAntiqueAtlasIntegration.markBattlemageKeep(world, origin.getX(), origin.getZ());
 
-		// Wizard spawning
+		// Entity spawning
 		Map<BlockPos, String> dataBlocks = template.getDataBlocks(origin, settings);
-
-		for (
-				Map.Entry<BlockPos, String> entry : dataBlocks.entrySet()) {
-
+		for (Map.Entry<BlockPos, String> entry : dataBlocks.entrySet()) {
 			Vec3d vec = GeometryUtils.getCentre(entry.getKey());
-
-			if (entry.getValue().equals(WIZARD_DATA_BLOCK_TAG)) {
-
-				EntityClassWizard wizard = new EntityClassWizard(world);
-				wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
-				wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
-				wizard.setArmourClass(ItemWizardArmour.ArmourClass.BATTLEMAGE);
-				wizard.setTowerBlocks(blocksPlaced);
-				world.spawnEntity(wizard);
-
-			} else if (entry.getValue().equals(EVIL_WIZARD_DATA_BLOCK_TAG)) {
-
-				EntityEvilClassWizard wizard = new EntityEvilClassWizard(world);
-				wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
-				wizard.hasStructure = true; // Stops it despawning
-				wizard.setArmourClass(ItemWizardArmour.ArmourClass.BATTLEMAGE);
-				wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
-				world.spawnEntity(wizard);
-			} else if (entry.getValue().equals(HORSE_DATA_BLOCK_TAG)){
-				EntityHorse horse = new EntityHorse(world);
-				horse.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
-				world.spawnEntity(horse);
-			} else {
-				// This probably shouldn't happen...
-				Wizardry.logger.info("Unrecognised data block value {} in structure {}", entry.getValue(), structureFile);
-			}
-
+			WorldGenUtils.spawnEntityByType(world, entry.getValue(), ItemWizardArmour.ArmourClass.BATTLEMAGE, origin, vec, blocksPlaced, Element.MAGIC, false);
 		}
-
 	}
 
 	@SubscribeEvent

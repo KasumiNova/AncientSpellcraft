@@ -4,12 +4,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.Settings;
-import com.windanesz.ancientspellcraft.entity.living.EntitySkeletonMageMinion;
 import com.windanesz.ancientspellcraft.integration.antiqueatlas.ASAntiqueAtlasIntegration;
 import com.windanesz.ancientspellcraft.tileentity.TileSageLectern;
-import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;
-import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.tileentity.TileEntityBookshelf;
 import electroblob.wizardry.util.BlockUtils;
@@ -41,11 +39,6 @@ import java.util.Set;
 
 public class WorldgenFallenTower extends WorldGenSurfaceStructure {
 
-	// TODO: Add wizard towers to the /locate command
-	// This requires some careful manipulation of Random objects to replicate the positions exactly for the current
-	// world. See the end of ChunkGeneratorOverworld for the relevant methods.
-
-	private static final String SKELETON_MAGE_DATA_BLOCK_TAG = "skeleton_mage_ghost";
 	private static final List<BiomeDictionary.Type> BIOME_TYPES = ImmutableList.of(BiomeDictionary.Type.FOREST);
 
 	private final Map<BiomeDictionary.Type, IBlockState> specialWallBlocks;
@@ -144,39 +137,17 @@ public class WorldgenFallenTower extends WorldGenSurfaceStructure {
 					}
 				}
 			}
-
 		}
 
 		ASAntiqueAtlasIntegration.markMysteryStructure(world, origin.getX(), origin.getZ());
 
-		// Wizard spawning
+		// Entity spawning
 		Map<BlockPos, String> dataBlocks = template.getDataBlocks(origin, settings);
-
-		for (
-				Map.Entry<BlockPos, String> entry : dataBlocks.entrySet()) {
-
+		for (Map.Entry<BlockPos, String> entry : dataBlocks.entrySet()) {
 			Vec3d vec = GeometryUtils.getCentre(entry.getKey());
-
-			if (entry.getValue().equals(SKELETON_MAGE_DATA_BLOCK_TAG)) {
-
-				EntitySkeletonMageMinion skeleton = new EntitySkeletonMageMinion(world);
-				skeleton.setElement(element);
-				skeleton.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
-				skeleton.setLifetime(-1); // Stops it despawning
-				skeleton.onInitialSpawn(world.getDifficultyForLocation(origin), null);
-				if (element == Element.HEALING) {
-					skeleton.populateSpellList(Element.HEALING, Spells.ray_of_purification);
-				}
-
-				world.spawnEntity(skeleton);
-				world.setBlockToAir(entry.getKey());
-			} else {
-				// This probably shouldn't happen...
-				Wizardry.logger.info("Unrecognised data block value {} in structure {}", entry.getValue(), structureFile);
-			}
-
+			WorldGenUtils.spawnEntityByType(world, entry.getValue(), ItemWizardArmour.ArmourClass.BATTLEMAGE, origin, vec, blocksPlaced,
+					Element.values()[1 + random.nextInt(Element.values().length - 1)], true);
 		}
-
 	}
 
 	NBTTagCompound setElement(NBTTagCompound compound, Element element) {

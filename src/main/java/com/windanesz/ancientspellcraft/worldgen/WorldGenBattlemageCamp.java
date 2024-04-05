@@ -3,11 +3,8 @@ package com.windanesz.ancientspellcraft.worldgen;
 import com.google.common.collect.ImmutableMap;
 import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.Settings;
-import com.windanesz.ancientspellcraft.entity.living.EntityClassWizard;
-import com.windanesz.ancientspellcraft.entity.living.EntityEvilClassWizard;
 import com.windanesz.ancientspellcraft.integration.antiqueatlas.ASAntiqueAtlasIntegration;
-import electroblob.wizardry.Wizardry;
-import electroblob.wizardry.entity.living.EntityWizard;
+import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.registry.WizardryAdvancementTriggers;
 import electroblob.wizardry.util.BlockUtils;
@@ -40,13 +37,6 @@ import java.util.Set;
 
 @Mod.EventBusSubscriber
 public class WorldGenBattlemageCamp extends WorldGenSurfaceStructureAS {
-
-	// TODO: Add wizard towers to the /locate command
-	// This requires some careful manipulation of Random objects to replicate the positions exactly for the current
-	// world. See the end of ChunkGeneratorOverworld for the relevant methods.
-
-	private static final String WIZARD_DATA_BLOCK_TAG = "wizard";
-	private static final String EVIL_WIZARD_DATA_BLOCK_TAG = "evil_wizard";
 
 	private final Map<BiomeDictionary.Type, IBlockState> specialWallBlocks;
 
@@ -110,47 +100,23 @@ public class WorldGenBattlemageCamp extends WorldGenSurfaceStructureAS {
 						wallMaterial, i.tileentityData) : i,
 
 				// Wood type
-				new WoodTypeTemplateProcessor(woodType)
-				//				// Mossifier
-				//				new MossifierTemplateProcessor(mossiness, 0.04f, origin.getY() + 1),
-				//				// Block recording (the process() method doesn't get called for structure voids)
-				//				(w, p, i) -> {if(i.blockState.getBlock() != Blocks.AIR) blocksPlaced.add(p); return i;}
+				new WoodTypeTemplateProcessor(woodType),
+				// Block recording (the process() method doesn't get called for structure voids)
+				(w, p, i) -> {
+					if (i.blockState.getBlock() != Blocks.AIR) {blocksPlaced.add(p);}
+					return i;
+				}
 		);
 
 		template.addBlocksToWorld(world, origin, processor, settings, 2 | 16);
 
 		ASAntiqueAtlasIntegration.markBattlemageCamp(world, origin.getX(), origin.getZ());
 
-		// Wizard spawning
+		// Entity spawning
 		Map<BlockPos, String> dataBlocks = template.getDataBlocks(origin, settings);
-
 		for (Map.Entry<BlockPos, String> entry : dataBlocks.entrySet()) {
-
 			Vec3d vec = GeometryUtils.getCentre(entry.getKey());
-
-			if (entry.getValue().equals(WIZARD_DATA_BLOCK_TAG)) {
-
-				EntityClassWizard wizard = new EntityClassWizard(world);
-				wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
-				wizard.setArmourClass(ItemWizardArmour.ArmourClass.BATTLEMAGE);
-				wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
-				wizard.setTowerBlocks(blocksPlaced);
-				world.spawnEntity(wizard);
-
-			} else if (entry.getValue().equals(EVIL_WIZARD_DATA_BLOCK_TAG)) {
-
-				EntityEvilClassWizard wizard = new EntityEvilClassWizard(world);
-				wizard.setArmourClass(ItemWizardArmour.ArmourClass.BATTLEMAGE);
-				wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
-				wizard.hasStructure = true; // Stops it despawning
-				wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
-				world.spawnEntity(wizard);
-			} else {
-				// This probably shouldn't happen...
-				Wizardry.logger.info("Unrecognised data block value {} in structure {}", entry.getValue(), structureFile);
-			}
-
-
+			WorldGenUtils.spawnEntityByType(world, entry.getValue(), ItemWizardArmour.ArmourClass.BATTLEMAGE, origin, vec, blocksPlaced, Element.MAGIC, false);
 		}
 	}
 
