@@ -729,6 +729,7 @@ item.ancientspellcraft\:warlock_orb_master_healing.name=Master Healing Warlock O
 
 item.ancientspellcraft\:sage_tome.buff=+%1$s%% Mystic Spell potency
 item.ancientspellcraft\:warlock_orb.buff=+%1$s%% Chaos Spell potency
+item.ancientspellcraft\:battlemage_sword.buff=+%1$s%% Runeword potency
 
 item.ancientspellcraft\:scepter_mind_control.desc=Hitting a creature with the scepter permanently mind controls the creature\nYou can only charm one creature at a time with this item
 item.ancientspellcraft\:scepter_mind_control.name=Scepter of the Overlord
@@ -738,7 +739,7 @@ item.ancientspellcraft\:soulbound_upgrade.name=Wand Soulbinding Upgrade
 item.ancientspellcraft\:sentience_upgrade.desc=Upgrades a Sage Tome's sentience while the Awakened Tome spell is active\nI: The tome follows the sage\nII: The tome occasionally casts its buff spells on the sage\nIII: No additional effect (WIP)
 item.ancientspellcraft\:sentience_upgrade.name=Sage Tome Sentience Upgrade
 item.ancientspellcraft\:empowerment_upgrade.desc=Grants %1$s%% potency to all other elements
-item.ancientspellcraft\:empowerment_upgrade.name=Sage Tome Empowerment Upgrade
+item.ancientspellcraft\:empowerment_upgrade.name=Class Weapon Empowerment Upgrade
 item.ancientspellcraft\:spectral_fishing_rod.name=Spectral Fishing Rod
 item.ancientspellcraft\:spectral_shield.name=Spectral Shield
 item.ancientspellcraft\:spectral_shovel.name=Spectral Shovel
