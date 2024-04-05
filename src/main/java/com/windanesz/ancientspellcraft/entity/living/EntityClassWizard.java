@@ -877,8 +877,6 @@ public class EntityClassWizard extends EntityWizard implements ICustomCooldown, 
 		return flag;
 	}
 
-
-
 	@Override
 	protected void blockUsingShield(EntityLivingBase attacker) {
 		attacker.knockBack(this, 0.1F, posX - attacker.posX, posZ - attacker.posZ);
