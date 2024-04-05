@@ -243,7 +243,7 @@ public class Experiment extends Spell implements IClassSpell {
 
 					switch (effectType) {
 						case FORFEIT_WEIGHT: {// tier: the more bonus points the player had, the less adverse the effects can be
-							System.out.println(FORFEIT_WEIGHT);
+
 							// TODO: artefact to reduce max tier by one
 							int tier = data.synchronisedRandom.nextInt(Math.max(0, Math.round(3 - (distinctElements.size() / 3f))));
 							Element element = Element.values()[Math.max(1, data.synchronisedRandom.nextInt(Element.values().length))];

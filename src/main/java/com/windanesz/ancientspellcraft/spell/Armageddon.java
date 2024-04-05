@@ -48,7 +48,6 @@ public class Armageddon extends SpellAreaEffect {
 
 			for (int i = 0; i < 1 && !validSpawnLocations.isEmpty(); i++) {
 				BlockPos currPos = validSpawnLocations.remove(world.rand.nextInt(validSpawnLocations.size()));
-				System.out.println("distance: " + currPos.distanceSq(caster.getPosition()));
 
 				EntityMeteor meteor = new EntityMeteor(world, currPos.getX() + 0.5, currPos.getY(), currPos.getZ() + 0.5, 0.5f, true);
 

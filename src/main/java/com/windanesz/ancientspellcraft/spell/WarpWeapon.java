@@ -84,7 +84,6 @@ public class WarpWeapon extends SpellRay {
 							? 1
 							: (int) ((modifiers.get(SpellModifiers.POTENCY) - 1.0f) / Constants.POTENCY_INCREASE_PER_TIER
 							+ 0.5f);
-					System.out.println("level: " + level);
 					stack.addEnchantment(ASEnchantments.degrade_sword, level);
 					//	}
 
