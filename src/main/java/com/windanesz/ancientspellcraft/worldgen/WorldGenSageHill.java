@@ -142,7 +142,7 @@ public class WorldGenSageHill extends WorldGenSurfaceStructureAS {
 		Map<BlockPos, String> dataBlocks = template.getDataBlocks(origin, settings);
 		for (Map.Entry<BlockPos, String> entry : dataBlocks.entrySet()) {
 			Vec3d vec = GeometryUtils.getCentre(entry.getKey());
-			WorldGenUtils.spawnEntityByType(world, entry.getValue(), ItemWizardArmour.ArmourClass.BATTLEMAGE, origin, vec, blocksPlaced,
+			WorldGenUtils.spawnEntityByType(world, entry.getValue(), ItemWizardArmour.ArmourClass.SAGE, origin, vec, blocksPlaced,
 					Element.values()[1 + random.nextInt(Element.values().length - 1)], false);
 		}
 	}
