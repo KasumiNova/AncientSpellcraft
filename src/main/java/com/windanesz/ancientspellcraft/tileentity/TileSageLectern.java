@@ -483,7 +483,7 @@ public class TileSageLectern extends TileEntity implements ITickable, IInventory
 		Optional<Element> element;
 		ItemWizardArmour.ArmourClass armourClass = WizardArmourUtils.getArmourClass(player);
 		element = WizardArmourUtils.getFullSetElementForClassOptional(player, armourClass);
-		List<Tier> possibleTiers = Arrays.asList(Tier.APPRENTICE, Tier.APPRENTICE, Tier.ADVANCED,  Tier.ADVANCED, Tier.MASTER);
+		List<Tier> possibleTiers = new ArrayList<>(Arrays.asList(Tier.APPRENTICE, Tier.APPRENTICE, Tier.ADVANCED, Tier.ADVANCED, Tier.MASTER));
 
 		Optional<Element> finalElement = element;
 		List<Spell> possibleSpells = Spell.getSpells(// Remove excluded tiers/elements immediately (mainly because empty tier checks should account for excluded elements)
@@ -491,6 +491,7 @@ public class TileSageLectern extends TileEntity implements ITickable, IInventory
 						&& (!finalElement.isPresent() || s.getElement() == finalElement.get()));
 
 		possibleSpells.removeIf(s -> !s.isEnabled(SpellProperties.Context.BOOK));
+		possibleSpells.removeIf(s -> !s.isEnabled(SpellProperties.Context.LOOTING));
 
 		// Select a tier...
 
