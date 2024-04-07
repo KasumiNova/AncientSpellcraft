@@ -17,6 +17,7 @@ import net.minecraft.block.BlockLog;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.BlockStoneSlab;
+import net.minecraft.block.BlockTallGrass;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -146,7 +147,7 @@ public class WorldGenBattlemageKeep extends WorldGenSurfaceStructureAS {
 				(w, p, i) -> i.blockState.getBlock() == Blocks.STONE_SLAB ? new Template.BlockInfo(i.pos,
 						slabMaterial, i.tileentityData) : i,
 				// change ground type to biome's cover block
-				(w, p, i) -> i.blockState.getBlock() == Blocks.DIRT ? new Template.BlockInfo(i.pos,
+				(w, p, i) -> i.blockState.getBlock() == Blocks.DIRT  || i.blockState.getBlock() == Blocks.GRASS ? new Template.BlockInfo(i.pos,
 						biomeCover, i.tileentityData) : i,
 				// Wood type
 				new WoodTypeTemplateProcessor(woodType),
@@ -176,7 +177,7 @@ public class WorldGenBattlemageKeep extends WorldGenSurfaceStructureAS {
 					// Edge blending
 					if (currPos.getY() != settings.getBoundingBox().minY || world.rand.nextFloat() < edgeBlendFactor) {
 						// Check if the position is air or not solid
-						if (world.isAirBlock(currPos) || world.getBlockState(currPos).getBlock() instanceof BlockBush || world.getBlockState(currPos).getBlock() instanceof BlockLog) {
+						if (world.getBlockState(currPos).getBlock() instanceof BlockTallGrass || world.isAirBlock(currPos) || world.getBlockState(currPos).getBlock() instanceof BlockBush || world.getBlockState(currPos).getBlock() instanceof BlockLog) {
 							// Determine block type based on Y position
 							IBlockState blockState = (currPos.getY() == settings.getBoundingBox().minY) ? biome.topBlock : biome.fillerBlock;
 

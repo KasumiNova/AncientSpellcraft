@@ -181,11 +181,11 @@ public class ItemRunicHammer extends Item implements ISpellCastingItem, IWorkben
 		text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.spell", new Style().setColor(TextFormatting.GRAY),
 				discovered ? spell.getDisplayNameWithFormatting() : "#" + TextFormatting.BLUE + SpellGlyphData.getGlyphName(spell, player.world)));
 
-		if (GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak)) {
-			AncientSpellcraft.proxy.addMultiLineDescription(text, I18n.format("tooltip.ancientspellcraft:sage_tome.more_info"));
-		} else {
-			text.add(I18n.format("tooltip.ancientspellcraft:more_info"));
-		}
+//		if (GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak)) {
+//			AncientSpellcraft.proxy.addMultiLineDescription(text, I18n.format("tooltip.ancientspellcraft:sage_tome.more_info"));
+//		} else {
+//			text.add(I18n.format("tooltip.ancientspellcraft:more_info"));
+//		}
 
 		if (advanced.isAdvanced()) {
 

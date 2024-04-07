@@ -22,7 +22,7 @@ import com.windanesz.ancientspellcraft.ritual.Ritual;
 import com.windanesz.ancientspellcraft.util.RitualProperties;
 import com.windanesz.ancientspellcraft.worldgen.WorldGenAncientTemple;
 import com.windanesz.ancientspellcraft.worldgen.WorldGenAstralDiamondOre;
-import com.windanesz.ancientspellcraft.worldgen.WorldGenBattlemageCamp;
+import com.windanesz.ancientspellcraft.worldgen.WorldgenWarlockCamp;
 import com.windanesz.ancientspellcraft.worldgen.WorldGenBattlemageKeep;
 import com.windanesz.ancientspellcraft.worldgen.WorldGenBookVault;
 import com.windanesz.ancientspellcraft.worldgen.WorldGenCrystalShardOre;
@@ -30,7 +30,6 @@ import com.windanesz.ancientspellcraft.worldgen.WorldGenCrystalSilverOre;
 import com.windanesz.ancientspellcraft.worldgen.WorldGenDevoritiumOre;
 import com.windanesz.ancientspellcraft.worldgen.WorldGenSageFlax;
 import com.windanesz.ancientspellcraft.worldgen.WorldGenSageHill;
-import com.windanesz.ancientspellcraft.worldgen.WorldGenWarlockStructure;
 import com.windanesz.ancientspellcraft.worldgen.WorldgenAncientVault;
 import com.windanesz.ancientspellcraft.worldgen.WorldgenFallenTower;
 import electroblob.wizardry.event.SpellCastEvent;
@@ -130,11 +129,11 @@ public class AncientSpellcraft {
 		GameRegistry.registerWorldGenerator(new WorldGenAstralDiamondOre(), 0);
 
 		// Weight is a misnomer, it's actually the priority (where lower numbers get generated first)
-		GameRegistry.registerWorldGenerator(new WorldGenBattlemageCamp(), 20);
+		GameRegistry.registerWorldGenerator(new WorldgenWarlockCamp(), 20);
 		GameRegistry.registerWorldGenerator(new WorldGenBattlemageKeep(), 20);
 		GameRegistry.registerWorldGenerator(new WorldGenSageHill(), 20);
 		GameRegistry.registerWorldGenerator(new WorldgenAncientVault(), 20);
-		GameRegistry.registerWorldGenerator(new WorldGenWarlockStructure(), 20);
+		//GameRegistry.registerWorldGenerator(new WorldGenWarlockStructure(), 20);
 		GameRegistry.registerWorldGenerator(new WorldGenAncientTemple(), 20);
 		GameRegistry.registerWorldGenerator(new WorldGenSageFlax(), 0);
 		GameRegistry.registerWorldGenerator(new WorldgenFallenTower(), 15);

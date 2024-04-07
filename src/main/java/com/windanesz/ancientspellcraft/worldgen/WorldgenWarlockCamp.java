@@ -11,6 +11,8 @@ import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.worldgen.MultiTemplateProcessor;
 import electroblob.wizardry.worldgen.WoodTypeTemplateProcessor;
+import net.minecraft.block.BlockBush;
+import net.minecraft.block.BlockLog;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -36,11 +38,11 @@ import java.util.Random;
 import java.util.Set;
 
 @Mod.EventBusSubscriber
-public class WorldGenBattlemageCamp extends WorldGenSurfaceStructureAS {
+public class WorldgenWarlockCamp extends WorldGenSurfaceStructureAS {
 
 	private final Map<BiomeDictionary.Type, IBlockState> specialWallBlocks;
 
-	public WorldGenBattlemageCamp() {
+	public WorldgenWarlockCamp() {
 		// These are initialised here because it's a convenient point after the blocks are registered
 		specialWallBlocks = ImmutableMap.of(
 				BiomeDictionary.Type.MESA, Blocks.RED_SANDSTONE.getDefaultState(),
@@ -52,7 +54,7 @@ public class WorldGenBattlemageCamp extends WorldGenSurfaceStructureAS {
 
 	@Override
 	public String getStructureName() {
-		return "battlemage_camp";
+		return "warlock_camp";
 	}
 
 	@Override
@@ -63,7 +65,7 @@ public class WorldGenBattlemageCamp extends WorldGenSurfaceStructureAS {
 	@Override
 	public boolean canGenerate(Random random, World world, int chunkX, int chunkZ) {
 		return ArrayUtils.contains(Settings.worldgenSettings.battlemageCampDimensions, world.provider.getDimension())
-				&& Settings.worldgenSettings.battlemageCampRarity > 0 && random.nextInt(Settings.worldgenSettings.battlemageCampRarity) == 0;
+				&& Settings.worldgenSettings.warlockCampRarity > 0 && random.nextInt(Settings.worldgenSettings.warlockCampRarity) == 0;
 	}
 
 	@Override
@@ -77,6 +79,7 @@ public class WorldGenBattlemageCamp extends WorldGenSurfaceStructureAS {
 
 		final EnumDyeColor colour = EnumDyeColor.values()[random.nextInt(EnumDyeColor.values().length)];
 		final Biome biome = world.getBiome(origin);
+		IBlockState biomeCover = biome.topBlock;
 		origin = origin.up();
 		final IBlockState wallMaterial = specialWallBlocks.keySet().stream().filter(t -> BiomeDictionary.hasType(biome, t))
 				.findFirst().map(specialWallBlocks::get).orElse(Blocks.COBBLESTONE.getDefaultState());
@@ -98,7 +101,9 @@ public class WorldGenBattlemageCamp extends WorldGenSurfaceStructureAS {
 				// Wall material
 				(w, p, i) -> i.blockState.getBlock() == Blocks.COBBLESTONE ? new Template.BlockInfo(i.pos,
 						wallMaterial, i.tileentityData) : i,
-
+				// change ground type to biome's cover block
+				(w, p, i) -> i.blockState.getBlock() == Blocks.DIRT  || i.blockState.getBlock() == Blocks.GRASS ? new Template.BlockInfo(i.pos,
+						biomeCover, i.tileentityData) : i,
 				// Wood type
 				new WoodTypeTemplateProcessor(woodType),
 				// Block recording (the process() method doesn't get called for structure voids)
@@ -110,13 +115,40 @@ public class WorldGenBattlemageCamp extends WorldGenSurfaceStructureAS {
 
 		template.addBlocksToWorld(world, origin, processor, settings, 2 | 16);
 
-		ASAntiqueAtlasIntegration.markBattlemageCamp(world, origin.getX(), origin.getZ());
+		if (settings.getBoundingBox() != null) {
+			// Define edge blend factor
+			float edgeBlendFactor = 0.3f;
+
+			// Iterate through each position in the bounding box
+			for (BlockPos currPos : BlockPos.getAllInBox(
+					settings.getBoundingBox().minX, settings.getBoundingBox().minY - 8, settings.getBoundingBox().minZ,
+					settings.getBoundingBox().maxX, settings.getBoundingBox().minY, settings.getBoundingBox().maxZ)) {
+				// Place top blocks
+				if (currPos.getY() == settings.getBoundingBox().minY && world.canSnowAt(currPos, true) && world.isAirBlock(currPos)) {
+					world.setBlockState(currPos, Blocks.SNOW_LAYER.getDefaultState(), 2);
+				} else {
+					// Edge blending
+					if (currPos.getY() != settings.getBoundingBox().minY || world.rand.nextFloat() < edgeBlendFactor) {
+						// Check if the position is air or not solid
+						if (world.isAirBlock(currPos) || world.getBlockState(currPos).getBlock() instanceof BlockBush || world.getBlockState(currPos).getBlock() instanceof BlockLog) {
+							// Determine block type based on Y position
+							IBlockState blockState = (currPos.getY() == settings.getBoundingBox().minY) ? biome.topBlock : biome.fillerBlock;
+
+							// Set the block state
+							world.setBlockState(currPos, blockState);
+						}
+					}
+				}
+			}
+		}
+
+		ASAntiqueAtlasIntegration.markMysteryStructure(world, origin.getX(), origin.getZ());
 
 		// Entity spawning
 		Map<BlockPos, String> dataBlocks = template.getDataBlocks(origin, settings);
 		for (Map.Entry<BlockPos, String> entry : dataBlocks.entrySet()) {
 			Vec3d vec = GeometryUtils.getCentre(entry.getKey());
-			WorldGenUtils.spawnEntityByType(world, entry.getValue(), ItemWizardArmour.ArmourClass.BATTLEMAGE, origin, vec, blocksPlaced, Element.MAGIC, false);
+			WorldGenUtils.spawnEntityByType(world, entry.getValue(), ItemWizardArmour.ArmourClass.WARLOCK, origin, vec, blocksPlaced, Element.MAGIC, false);
 		}
 	}
 

@@ -686,10 +686,10 @@ public class Settings {
 		@Config.RequiresMcRestart
 		public int[] sageHillDimensions = {0};
 
-		@Config.Name("Battlemage Camp Rarity")
-		@Config.Comment("[Server-only] The rarity of battlemage camps, used by the world generator. Larger numbers are rarer.")
+		@Config.Name("Warlock Camp Rarity")
+		@Config.Comment("[Server-only] The rarity of warlock camps, used by the world generator. Larger numbers are rarer.")
 		@Config.RequiresMcRestart
-		public int battlemageCampRarity = 3200;
+		public int warlockCampRarity = 3200;
 
 		@Config.Name("Book Vault Rarity")
 		@Config.Comment("[Server-only] The rarity of battlemage camps, used by the world generator. Larger numbers are rarer.")
