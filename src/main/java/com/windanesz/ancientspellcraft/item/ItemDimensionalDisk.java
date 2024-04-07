@@ -37,7 +37,7 @@ public class ItemDimensionalDisk extends ItemASArtefact {
 			if (world.getBlockState(player.getPosition().down()).getBlock() instanceof BlockDimensionFocus) {
 				int currentRadius = 0;
 				IBlockState oldBlock = null;
-				for (int i = 0; i < 40; i++) {
+				for (int i = 0; i < 32; i++) {
 					oldBlock = world.getBlockState(player.getPosition().offset(EnumFacing.NORTH, i));
 					if (!(oldBlock.getBlock() instanceof BlockDimensionBoundary)) {
 						currentRadius++;
