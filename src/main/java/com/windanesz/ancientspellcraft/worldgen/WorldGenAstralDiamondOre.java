@@ -19,7 +19,7 @@ public class WorldGenAstralDiamondOre extends WorldGenOreBase implements IWorldG
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
 
 		if (Settings.worldgenSettings.generateAstralDiamondOre && Ints.contains(Settings.worldgenSettings.astralDiamondOreDimensions, world.provider.getDimension())) {
-			this.addOreSpawn(ASBlocks.CRYSTAL_SILVER_ORE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 16, 16,
+			this.addOreSpawn(ASBlocks.ASTRAL_DIAMOND_ORE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 16, 16,
 					Settings.worldgenSettings.astralDiamondOreMaxVeinSize,
 					Settings.worldgenSettings.astralDiamondOreChancesToSpawn,
 					Settings.worldgenSettings.astralDiamondOreYLayerMin,
