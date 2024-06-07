@@ -14,10 +14,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -52,12 +54,18 @@ public class CurseArmor extends SpellRay {
 							itemStackList.add(stack);
 						}
 					}
+
+					if (!(target instanceof EntityPlayer)) {
+						target.addPotionEffect(new PotionEffect(ASPotions.degraded_armor, 1200, 0));
+					}
+
 					if (!itemStackList.isEmpty()) {
 						ItemStack itemToCurse = pickRandomStackFromItemStackList(itemStackList);
 						return attemptCurseItemStack(itemToCurse);
 					}
-					return false;
+					return true;
 					// TODO: add play sound
+
 				}
 			}
 		}
