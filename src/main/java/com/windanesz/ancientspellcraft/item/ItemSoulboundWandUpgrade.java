@@ -18,6 +18,11 @@ public class ItemSoulboundWandUpgrade extends ItemWandUpgradeAS {
 
 	private static final IStoredVariable<NBTTagCompound> STORED_WANDS = IStoredVariable.StoredVariable.ofNBT("soulbound_wands", Persistence.ALWAYS);
 
+	public ItemSoulboundWandUpgrade() {
+		super();
+		WizardData.registerStoredVariables(STORED_WANDS);
+	}
+
 	/**
 	 * Gets all the stored wands from WizardData and gives it back to the player, then purges these from WizardData
 	 * @param player
