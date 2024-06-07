@@ -6,6 +6,9 @@ import com.windanesz.ancientspellcraft.registry.ASItems;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.spell.SpellConstructRanged;
 import net.minecraft.item.Item;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class AntiMagicField extends SpellConstructRanged<EntityAntiMagicField> {
 
@@ -17,5 +20,10 @@ public class AntiMagicField extends SpellConstructRanged<EntityAntiMagicField> {
 	@Override
 	public boolean applicableForItem(Item item) {
 		return item == ASItems.ancient_spell_book || item == ASItems.ancient_spellcraft_scroll;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public String getDisplayNameWithFormatting() {
+		return TextFormatting.GOLD + net.minecraft.client.resources.I18n.format(getTranslationKey());
 	}
 }

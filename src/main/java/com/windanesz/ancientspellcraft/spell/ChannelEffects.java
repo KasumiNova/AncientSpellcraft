@@ -22,7 +22,10 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.function.Predicate;
@@ -142,5 +145,10 @@ public class ChannelEffects extends SpellRay {
 	@Override
 	public boolean applicableForItem(Item item) {
 		return item == ASItems.ancient_spell_book || item == ASItems.ancient_spellcraft_scroll;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public String getDisplayNameWithFormatting() {
+		return TextFormatting.GOLD + net.minecraft.client.resources.I18n.format(getTranslationKey());
 	}
 }

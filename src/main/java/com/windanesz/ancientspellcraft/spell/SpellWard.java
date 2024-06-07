@@ -6,6 +6,9 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.potion.Potion;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.function.Supplier;
 
@@ -35,5 +38,10 @@ public class SpellWard extends SpellBuffAS {
 	@Override
 	public boolean applicableForItem(Item item) {
 		return item == ASItems.ancient_spell_book || item == ASItems.ancient_spellcraft_scroll;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public String getDisplayNameWithFormatting() {
+		return TextFormatting.GOLD + net.minecraft.client.resources.I18n.format(getTranslationKey());
 	}
 }

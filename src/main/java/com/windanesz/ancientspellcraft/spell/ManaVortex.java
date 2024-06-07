@@ -10,6 +10,9 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ManaVortex extends SpellConstruct<EntityManaVortex> {
 
@@ -31,6 +34,11 @@ public class ManaVortex extends SpellConstruct<EntityManaVortex> {
 	@Override
 	public boolean applicableForItem(Item item) {
 		return item == ASItems.ancient_spell_book || item == ASItems.ancient_spellcraft_scroll;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public String getDisplayNameWithFormatting() {
+		return TextFormatting.GOLD + net.minecraft.client.resources.I18n.format(getTranslationKey());
 	}
 
 }

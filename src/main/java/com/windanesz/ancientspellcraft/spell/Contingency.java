@@ -27,7 +27,10 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class Contingency extends Spell {
 
@@ -240,5 +243,10 @@ public class Contingency extends Spell {
 
 			throw new IllegalArgumentException("No such type with unlocalised name: " + name);
 		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	public String getDisplayNameWithFormatting() {
+		return TextFormatting.GOLD + net.minecraft.client.resources.I18n.format(getTranslationKey());
 	}
 }

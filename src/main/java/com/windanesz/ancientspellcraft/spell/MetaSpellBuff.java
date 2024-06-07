@@ -79,12 +79,6 @@ public class MetaSpellBuff extends Spell {
 		}
 	}
 
-
-	@SideOnly(Side.CLIENT)
-	public String getDisplayNameWithFormatting(){
-		return TextFormatting.GOLD +  net.minecraft.client.resources.I18n.format(getTranslationKey());
-	}
-
 	@Override
 	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers) {
 
@@ -173,5 +167,10 @@ public class MetaSpellBuff extends Spell {
 	@Override
 	public boolean applicableForItem(Item item) {
 		return item == ASItems.ancient_spell_book || item == ASItems.ancient_spellcraft_scroll;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public String getDisplayNameWithFormatting() {
+		return TextFormatting.GOLD + net.minecraft.client.resources.I18n.format(getTranslationKey());
 	}
 }
