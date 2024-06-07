@@ -222,6 +222,6 @@ public class WordsOfUnbinding extends Spell {
 
 	@Override
 	public boolean applicableForItem(Item item) {
-		return item == ASItems.ancient_spell_book || item == ASItems.ancient_spellcraft_scroll;
+		return item == ASItems.ancient_spell_book;
 	}
 }
