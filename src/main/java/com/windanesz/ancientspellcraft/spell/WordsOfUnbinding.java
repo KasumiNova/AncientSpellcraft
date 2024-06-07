@@ -118,6 +118,11 @@ public class WordsOfUnbinding extends Spell {
 
 			String upgradeString = upgrade.getRegistryName().getPath().replace("_upgrade", "");
 
+			// AS upgrades have a _suffix, but I won't fix this now as it would break existing worlds, this is a bit ugly but won't cause a breaking change
+			if (upgrade.getRegistryName().getNamespace().toString().equals(AncientSpellcraft.MODID)) {
+				upgradeString += "_upgrade";
+			}
+
 			if (upgrades.hasKey(upgradeString)) {
 				int counter = upgrades.getInteger(upgradeString);
 				counter--;
@@ -174,7 +179,7 @@ public class WordsOfUnbinding extends Spell {
 					upgrades.removeTag(upgradeToDecrease);
 				}
 
-				if (upgradeToDecrease.equals("attunement")) {
+				 if (upgradeToDecrease.equals("attunement")) {
 					if (wand.getItem() instanceof IWorkbenchItem) {
 						Spell[] spells = WandHelper.getSpells(wand);
 						Spell[] newSpells = new Spell[((IWorkbenchItem) wand.getItem()).getSpellSlotCount(wand)];
