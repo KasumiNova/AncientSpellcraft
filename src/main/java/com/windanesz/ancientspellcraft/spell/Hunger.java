@@ -5,6 +5,7 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntityDispenser;
@@ -31,6 +32,9 @@ public class Hunger extends SpellRayAS {
 
 			EntityLivingBase targetEntity = (EntityLivingBase) target;
 			targetEntity.addPotionEffect(new PotionEffect(MobEffects.HUNGER, getProperty(EFFECT_DURATION).intValue(), getProperty(EFFECT_STRENGTH).intValue()));
+			if (!(targetEntity instanceof EntityPlayer)) {
+				targetEntity.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, getProperty(EFFECT_DURATION).intValue(), getProperty(EFFECT_STRENGTH).intValue()));
+			}
 			return true;
 		}
 		return false;

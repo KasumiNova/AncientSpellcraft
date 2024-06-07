@@ -6,6 +6,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
@@ -36,6 +37,11 @@ public class Starve extends SpellRayAS {
 			targetPlayer.getFoodStats().addExhaustion((int) (saturation / 2));
 
 			return true;
+		} else if (target instanceof EntityLivingBase) {
+			EntityLivingBase entityLivingBase = (EntityLivingBase) target;
+			entityLivingBase.addPotionEffect(new net.minecraft.potion.PotionEffect(net.minecraft.init.MobEffects.HUNGER, 200, 2));
+			entityLivingBase.addPotionEffect(new net.minecraft.potion.PotionEffect(MobEffects.SLOWNESS, 200, 1));
+			entityLivingBase.addPotionEffect(new net.minecraft.potion.PotionEffect(MobEffects.WEAKNESS, 200, 1));
 		}
 		return false;
 	}
