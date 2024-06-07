@@ -799,11 +799,6 @@ public class ItemWarlockOrb extends Item implements ISpellCastingItem, IWorkbenc
 		float progressionModifier = 1.0f - ((float) WizardData.get(player).countRecentCasts(spell) / WizardData.MAX_RECENT_SPELLS)
 				* MAX_PROGRESSION_REDUCTION;
 
-		if (this.element == spell.getElement() || spell.getElement() == Element.MAGIC && spell instanceof IClassSpell) {
-			modifiers.set(SpellModifiers.POTENCY, 1.0f + (this.tier.level + 1) * Constants.POTENCY_INCREASE_PER_TIER, true);
-			progressionModifier *= ELEMENTAL_PROGRESSION_MODIFIER;
-		}
-
 		if (spell instanceof IClassSpell && ((IClassSpell) spell).getArmourClass() == ItemWizardArmour.ArmourClass.WARLOCK) {
 			modifiers.set(SpellModifiers.POTENCY, 1.0f + (this.tier.level + 1) * Constants.POTENCY_INCREASE_PER_TIER, true);
 			progressionModifier *= ELEMENTAL_PROGRESSION_MODIFIER;
