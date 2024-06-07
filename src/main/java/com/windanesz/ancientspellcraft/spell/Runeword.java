@@ -199,6 +199,11 @@ public class Runeword extends Spell implements IClassSpell, IRuneword {
 		}
 		return 0;
 	}
+
+	@Override
+	public boolean canBeCastBy(EntityLiving npc, boolean override) {
+		return canBeCastByClassNPC(npc);
+	}
 }
 
 

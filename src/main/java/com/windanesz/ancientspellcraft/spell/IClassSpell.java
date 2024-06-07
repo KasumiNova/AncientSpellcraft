@@ -4,6 +4,7 @@ import com.windanesz.ancientspellcraft.AncientSpellcraft;
 import com.windanesz.ancientspellcraft.entity.living.EntityAnimatedItem;
 import com.windanesz.ancientspellcraft.entity.living.EntityClassWizard;
 import com.windanesz.ancientspellcraft.entity.living.EntityEvilClassWizard;
+import com.windanesz.ancientspellcraft.entity.living.IArmourClassWizard;
 import com.windanesz.ancientspellcraft.item.ItemBattlemageSword;
 import com.windanesz.ancientspellcraft.item.ItemSageTome;
 import com.windanesz.ancientspellcraft.item.ItemWarlockOrb;
@@ -96,7 +97,6 @@ public interface IClassSpell {
 	}
 
 	default boolean canBeCastByClassNPC(EntityLivingBase npc) {
-		return npc instanceof EntityEvilClassWizard || npc instanceof EntityClassWizard;
+		return npc instanceof IArmourClassWizard && ((IArmourClassWizard) npc).getArmourClass() == getArmourClass();
 	}
-
 }

@@ -6,6 +6,7 @@ import com.windanesz.ancientspellcraft.registry.ASItems;
 import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.spell.SpellConstructRanged;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.item.Item;
 
 public class ChaosField extends SpellConstructRanged<EntityChaosField> implements IClassSpell {
@@ -25,4 +26,8 @@ public class ChaosField extends SpellConstructRanged<EntityChaosField> implement
 		return item == ASItems.forbidden_tome;
 	}
 
+	@Override
+	public boolean canBeCastBy(EntityLiving npc, boolean override) {
+		return canBeCastByClassNPC(npc);
+	}
 }

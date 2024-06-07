@@ -9,6 +9,7 @@ import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.spell.SpellRay;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -65,4 +66,9 @@ public class RunewordSealbreaker extends SpellRay implements IRuneword {
 
 	@Override
 	public boolean applicableForItem(Item item) { return item == ASItems.runic_plate; }
+
+	@Override
+	public boolean canBeCastBy(EntityLiving npc, boolean override) {
+		return canBeCastByClassNPC(npc);
+	}
 }

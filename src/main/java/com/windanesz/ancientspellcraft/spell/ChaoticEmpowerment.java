@@ -7,6 +7,7 @@ import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.spell.SpellAreaEffect;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
@@ -66,5 +67,10 @@ public class ChaoticEmpowerment extends SpellAreaEffect implements IClassSpell{
 	@Override
 	public boolean applicableForItem(Item item) {
 		return item == ASItems.forbidden_tome;
+	}
+
+	@Override
+	public boolean canBeCastBy(EntityLiving npc, boolean override) {
+		return canBeCastByClassNPC(npc);
 	}
 }
